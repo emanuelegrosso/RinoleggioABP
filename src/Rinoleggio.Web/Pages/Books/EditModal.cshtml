@@ -1,0 +1,24 @@
+@page
+@using Rinoleggio.Localization
+@using Rinoleggio.Web.Pages.Books
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model EditModalModel
+@inject IStringLocalizer<RinoleggioResource> L
+@{
+    Layout = null;
+}
+<form asp-page="/Books/EditModal">
+    <abp-modal>
+        <abp-modal-header title="@L["Edit"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-input asp-for="Id" />
+            <abp-input asp-for="Book.Name" />
+            <abp-select asp-for="Book.AuthorId" asp-items="Model.Authors" label="@L["Author"].Value" />
+            <abp-select asp-for="Book.Type" />
+            <abp-input asp-for="Book.PublishDate" />
+            <abp-input asp-for="Book.Price" />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>

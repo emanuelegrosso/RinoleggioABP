@@ -1,0 +1,24 @@
+<Solution>
+    <Configurations>
+        <Platform Name="Any CPU" />
+    </Configurations>
+    <Folder Name="/src/">
+        <Project Path="src/Rinoleggio.Domain/Rinoleggio.Domain.csproj" />
+        <Project Path="src/Rinoleggio.Application/Rinoleggio.Application.csproj" />
+        <Project Path="src/Rinoleggio.EntityFrameworkCore/Rinoleggio.EntityFrameworkCore.csproj" />
+        <Project Path="src/Rinoleggio.Web/Rinoleggio.Web.csproj" />
+        <Project Path="src/Rinoleggio.Domain.Shared/Rinoleggio.Domain.Shared.csproj" />
+        <Project Path="src/Rinoleggio.Application.Contracts/Rinoleggio.Application.Contracts.csproj" />
+        <Project Path="src/Rinoleggio.HttpApi/Rinoleggio.HttpApi.csproj" />
+        <Project Path="src/Rinoleggio.HttpApi.Client/Rinoleggio.HttpApi.Client.csproj" />
+        <Project Path="src/Rinoleggio.DbMigrator/Rinoleggio.DbMigrator.csproj" />
+    </Folder>
+    <Folder Name="/test/">
+        <Project Path="test/Rinoleggio.Application.Tests/Rinoleggio.Application.Tests.csproj" />
+        <Project Path="test/Rinoleggio.Web.Tests/Rinoleggio.Web.Tests.csproj" />
+        <Project Path="test/Rinoleggio.EntityFrameworkCore.Tests/Rinoleggio.EntityFrameworkCore.Tests.csproj" />
+        <Project Path="test/Rinoleggio.TestBase/Rinoleggio.TestBase.csproj" />
+        <Project Path="test/Rinoleggio.Domain.Tests/Rinoleggio.Domain.Tests.csproj" />
+        <Project Path="test/Rinoleggio.HttpApi.Client.ConsoleTestApp/Rinoleggio.HttpApi.Client.ConsoleTestApp.csproj" />
+    </Folder>
+</Solution>
