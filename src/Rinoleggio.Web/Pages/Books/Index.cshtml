@@ -1,0 +1,35 @@
+﻿@page
+@using Rinoleggio.Localization
+@using Rinoleggio.Permissions
+@using Rinoleggio.Web.Pages.Books
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Localization
+@model IndexModel
+@inject IStringLocalizer<RinoleggioResource> L
+@inject IAuthorizationService AuthorizationService
+@section scripts
+{
+    <abp-script src="/Pages/Books/Index.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <abp-card-title>@L["Books"]</abp-card-title>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                <abp-button id="ExportBooksToExcelButton" text="@L["ExportToExcel"].Value" icon="download" button-type="Secondary" />
+                @if (await AuthorizationService.IsGrantedAsync(RinoleggioPermissions.Books.Create))
+                {
+                    <abp-button id="NewBookButton"
+                                text="@L["NewBook"].Value"
+                                icon="plus"
+                                button-type="Primary" class="ms-2"/>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="BooksTable"></abp-table>
+    </abp-card-body>
+</abp-card>
