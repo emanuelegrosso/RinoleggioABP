@@ -1,0 +1,221 @@
+@page
+@using System
+@using Rinoleggio.Listings
+@using Rinoleggio.Permissions
+@using Rinoleggio.Web.Pages.Contracts
+@model Rinoleggio.Web.Pages.Contracts.IndexModel
+@{
+    ViewBag.Title = "Ricerca contratti";
+}
+<div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div>
+            <h1 class="h3 mb-1">Ricerca contratti</h1>
+            <p class="text-muted mb-0">@Model.Results.TotalCount contratti trovati</p>
+        </div>
+        @if (Model.CanCreateListing)
+        {
+            <a class="btn btn-primary" asp-page="/Contracts/Create">Nuovo contratto</a>
+        }
+    </div>
+
+    <form method="get" id="contractsSearchForm" class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-12">
+                    <label class="form-label">Ricerca testuale</label>
+                    <input asp-for="Filters.Query" class="form-control" placeholder="Marca, modello, titolo..." />
+                </div>
+            </div>
+
+            <div class="accordion" id="filtersAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#vehicleFilters">Veicolo</button></h2>
+                    <div id="vehicleFilters" class="accordion-collapse collapse show" data-bs-parent="#filtersAccordion">
+                        <div class="accordion-body row g-3">
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Provincia</label><select asp-for="Filters.ProvinceId" class="form-select" asp-items="@(new SelectList(Model.Lookups.Provinces, "Id", "Name"))"><option value="">Indifferente</option></select></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Marca</label><select asp-for="Filters.BrandId" class="form-select" asp-items="@(new SelectList(Model.Lookups.Brands, "Id", "Name"))"><option value="">Indifferente</option></select></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Modello / versione</label><input asp-for="Filters.ModelVersion" class="form-control" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Anno da</label><input asp-for="Filters.RegistrationYearMin" class="form-control" type="number" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Anno a</label><input asp-for="Filters.RegistrationYearMax" class="form-control" type="number" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Alimentazione</label><select asp-for="Filters.FuelType" class="form-select" asp-items="@(ContractFormHelper.GetFuelTypeItems())"><option value="">Indifferente</option></select></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Cambio</label><select asp-for="Filters.Transmission" class="form-select" asp-items="@(ContractFormHelper.GetTransmissionItems())"><option value="">Indifferente</option></select></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contractFilters">Contratto e costi</button></h2>
+                    <div id="contractFilters" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                        <div class="accordion-body row g-3">
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Società di noleggio</label><select asp-for="Filters.RentalCompanyId" class="form-select" asp-items="@(new SelectList(Model.Lookups.RentalCompanies, "Id", "Name"))"><option value="">Indifferente</option></select></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Canone da</label><input asp-for="Filters.MonthlyFeeMin" class="form-control" type="number" step="0.01" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Canone a</label><input asp-for="Filters.MonthlyFeeMax" class="form-control" type="number" step="0.01" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Anticipo da</label><input asp-for="Filters.InitialPaymentMin" class="form-control" type="number" step="0.01" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Anticipo a</label><input asp-for="Filters.InitialPaymentMax" class="form-control" type="number" step="0.01" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">IVA</label><select asp-for="Filters.VatIncluded" class="form-select"><option value="">Indifferente</option><option value="true">Inclusa</option><option value="false">Esclusa</option></select></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Scadenza da</label><input asp-for="Filters.EndDateMin" class="form-control" type="date" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Scadenza a</label><input asp-for="Filters.EndDateMax" class="form-control" type="date" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Mesi residui min.</label><input asp-for="Filters.MinimumMonthsRemaining" class="form-control" type="number" /></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kmFilters">Chilometraggio</button></h2>
+                    <div id="kmFilters" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                        <div class="accordion-body row g-3">
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Km totali da</label><input asp-for="Filters.TotalKmMin" class="form-control" type="number" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Km totali a</label><input asp-for="Filters.TotalKmMax" class="form-control" type="number" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Km attuali da</label><input asp-for="Filters.CurrentKmMin" class="form-control" type="number" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Km attuali a</label><input asp-for="Filters.CurrentKmMax" class="form-control" type="number" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Km residui da</label><input asp-for="Filters.RemainingKmMin" class="form-control" type="number" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Km residui a</label><input asp-for="Filters.RemainingKmMax" class="form-control" type="number" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Penale km extra da</label><input asp-for="Filters.ExcessKmRateMin" class="form-control" type="number" step="0.001" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Penale km extra a</label><input asp-for="Filters.ExcessKmRateMax" class="form-control" type="number" step="0.001" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Credito km da</label><input asp-for="Filters.UnderKmRateMin" class="form-control" type="number" step="0.001" /></div>
+                            <div class="col-md-3 col-sm-6"><label class="form-label">Credito km a</label><input asp-for="Filters.UnderKmRateMax" class="form-control" type="number" step="0.001" /></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#transferFilters">Subentro</button></h2>
+                    <div id="transferFilters" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                        <div class="accordion-body row g-3">
+                            <div class="col-md-4 col-sm-6"><label class="form-label">Contributo</label><select asp-for="Filters.ContributionType" class="form-select" asp-items="@(ContractFormHelper.GetContributionTypeItems())"><option value="">Indifferente</option></select></div>
+                            <div class="col-md-4 col-sm-6"><label class="form-label">Importo da</label><input asp-for="Filters.ContributionAmountMin" class="form-control" type="number" step="0.01" /></div>
+                            <div class="col-md-4 col-sm-6"><label class="form-label">Importo a</label><input asp-for="Filters.ContributionAmountMax" class="form-control" type="number" step="0.01" /></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serviceFilters">Servizi</button></h2>
+                    <div id="serviceFilters" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                        <div class="accordion-body">
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-4 col-sm-6 form-check"><input class="form-check-input" type="checkbox" name="Filters.MaintenanceIncluded" value="true" @(Model.Filters.MaintenanceIncluded == true ? "checked" : null) id="Filters_MaintenanceIncluded" /><label class="form-check-label" for="Filters_MaintenanceIncluded">Manutenzione</label></div>
+                                <div class="col-md-4 col-sm-6 form-check"><input class="form-check-input" type="checkbox" name="Filters.InsuranceIncluded" value="true" @(Model.Filters.InsuranceIncluded == true ? "checked" : null) id="Filters_InsuranceIncluded" /><label class="form-check-label" for="Filters_InsuranceIncluded">Assicurazione</label></div>
+                                <div class="col-md-4 col-sm-6 form-check"><input class="form-check-input" type="checkbox" name="Filters.RoadsideAssistanceIncluded" value="true" @(Model.Filters.RoadsideAssistanceIncluded == true ? "checked" : null) id="Filters_RoadsideAssistanceIncluded" /><label class="form-check-label" for="Filters_RoadsideAssistanceIncluded">Assistenza stradale</label></div>
+                                <div class="col-md-4 col-sm-6 form-check"><input class="form-check-input" type="checkbox" name="Filters.ReplacementCarIncluded" value="true" @(Model.Filters.ReplacementCarIncluded == true ? "checked" : null) id="Filters_ReplacementCarIncluded" /><label class="form-check-label" for="Filters_ReplacementCarIncluded">Auto sostitutiva</label></div>
+                                <div class="col-md-4 col-sm-6 form-check"><input class="form-check-input" type="checkbox" name="Filters.TiresIncluded" value="true" @(Model.Filters.TiresIncluded == true ? "checked" : null) id="Filters_TiresIncluded" /><label class="form-check-label" for="Filters_TiresIncluded">Pneumatici</label></div>
+                                <div class="col-md-4 col-sm-6 form-check"><input class="form-check-input" type="checkbox" name="Filters.RoadTaxIncluded" value="true" @(Model.Filters.RoadTaxIncluded == true ? "checked" : null) id="Filters_RoadTaxIncluded" /><label class="form-check-label" for="Filters_RoadTaxIncluded">Bollo</label></div>
+                            </div>
+                            <label class="form-label">Tipi assicurazione</label>
+                            <div class="row g-2">
+                                @foreach (var kind in ContractFormHelper.InsuranceKinds)
+                                {
+                                    <div class="col-md-4 col-sm-6 form-check">
+                                        <input class="form-check-input" type="checkbox" name="Filters.InsuranceKinds" value="@kind.Value" @((Model.Filters.InsuranceKinds ?? []).Contains(kind.Value) ? "checked" : null) />
+                                        <label class="form-check-label">@kind.Label</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-3 align-items-end">
+                <div class="col-md-6 col-lg-5">
+                    <label class="form-label" for="filtersSorting">Ordina per</label>
+                    <select asp-for="Filters.Sorting" class="form-select" id="filtersSorting">
+                        @foreach (var opt in ContractSearchSortHelper.SortOptions)
+                        {
+                            if (string.Equals(Model.Filters.Sorting ?? string.Empty, opt.Value, StringComparison.Ordinal))
+                            {
+                                <option value="@opt.Value" selected="selected">@opt.Label</option>
+                            }
+                            else
+                            {
+                                <option value="@opt.Value">@opt.Label</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-primary">Applica filtri</button>
+                <button type="submit" formaction="?handler=Reset" class="btn btn-outline-secondary">Azzera filtri</button>
+            </div>
+            <input type="hidden" asp-for="Filters.MaxResultCount" />
+            <input type="hidden" asp-for="Filters.SkipCount" />
+        </div>
+    </form>
+
+    @if (Model.Results.TotalCount > 0)
+    {
+        <div class="d-flex flex-wrap justify-content-end align-items-center mb-3 gap-2">
+            <label class="form-label mb-0 small text-muted" for="resultsSorting">Ordina</label>
+            <select id="resultsSorting" class="form-select form-select-sm w-auto" form="contractsSearchForm" name="Filters.Sorting" onchange="document.getElementById('contractsSearchForm').requestSubmit()">
+                @foreach (var opt in ContractSearchSortHelper.SortOptions)
+                {
+                    if (string.Equals(Model.Filters.Sorting ?? string.Empty, opt.Value, StringComparison.Ordinal))
+                    {
+                        <option value="@opt.Value" selected="selected">@opt.Label</option>
+                    }
+                    else
+                    {
+                        <option value="@opt.Value">@opt.Label</option>
+                    }
+                }
+            </select>
+        </div>
+    }
+
+    @if (Model.Results.TotalCount == 0)
+    {
+        <div class="alert alert-light border text-center py-5 mb-0">
+            <p class="h6 mb-2">Nessun contratto corrisponde ai filtri selezionati.</p>
+            <p class="text-muted small mb-3">Prova ad allargare la ricerca o rimuovi alcuni filtri.</p>
+            <a asp-page="/Contracts/Index" class="btn btn-outline-primary">Mostra tutti gli annunci</a>
+        </div>
+    }
+    else
+    {
+    <div class="row g-3">
+        @foreach (var item in Model.Results.Items)
+        {
+            <div class="col-xl-3 col-md-6 col-12">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrEmpty(item.CoverImagePath))
+                    {
+                        <img src="@ContractFormHelper.ImageUrl(item.CoverImagePath)" class="card-img-top" alt="@item.Title" style="height:160px;object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center text-muted small" style="height:160px;">Nessuna foto</div>
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <h2 class="h6">
+                            @item.BrandName @item.Model @item.Version
+                            @if (item.BusinessStatus == ListingBusinessStatus.Reserved)
+                            {
+                                <span class="badge text-bg-warning ms-1">Riservato</span>
+                            }
+                        </h2>
+                        <p class="text-primary fw-bold fs-5 mb-1">@ContractFormHelper.FormatMoney(item.MonthlyFee)/mese</p>
+                        <p class="small text-muted mb-2">@item.RentalCompanyName · Scadenza @item.EndDate.ToString("dd/MM/yyyy")</p>
+                        <p class="small mb-3">Km residui: @item.RemainingKm · IVA @(item.VatIncluded ? "inclusa" : "esclusa") · @item.ProvinceName</p>
+                        <a class="btn btn-outline-primary mt-auto" asp-page="/Contracts/Detail" asp-route-id="@item.Id">Dettaglio</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    var totalPages = (int)Math.Ceiling(Model.Results.TotalCount / (double)Math.Max(1, Model.Filters.MaxResultCount));
+    var currentPage = Model.Filters.SkipCount / Model.Filters.MaxResultCount + 1;
+    if (totalPages > 1)
+    {
+        <nav class="mt-4">
+            <ul class="pagination">
+                @for (var p = 1; p <= totalPages; p++)
+                {
+                    <li class="page-item @(p == currentPage ? "active" : "")">
+                        <a class="page-link" href="@Model.BuildPageUrl(p)">@p</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+    }
+</div>

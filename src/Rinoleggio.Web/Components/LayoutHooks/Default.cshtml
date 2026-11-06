@@ -1,0 +1,7 @@
+@model bool
+@{
+    var shellClass = Model ? "lpx-auth" : "lpx-guest";
+}
+<script>
+    document.documentElement.classList.add('@shellClass');
+</script>

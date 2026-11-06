@@ -2,7 +2,7 @@
   "Culture": "en-GB",
   "Texts": {
     "AppName": "Rinoleggio",
-    "Menu:Rinoleggio": "Book Store",
+    "Menu:Rinoleggio": "Rinoleggio",
     "Menu:Books": "Books",
     "Menu:Authors": "Authors",
     "Actions": "Actions",
@@ -34,7 +34,7 @@
     "Enum:BookType.6": "Science",
     "Enum:BookType.7": "Science fiction",
     "Enum:BookType.8": "Poetry",
-    "Permission:Rinoleggio": "Book Store",
+    "Permission:Rinoleggio": "Rinoleggio",
     "Permission:Books": "Book Management",
     "Permission:Books.Create": "Creating new books",
     "Permission:Books.Edit": "Editing the books",

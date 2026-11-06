@@ -14,11 +14,16 @@ public class DbMigratorHostedService : IHostedService
 {
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
     private readonly IConfiguration _configuration;
+    private readonly IHostEnvironment _hostEnvironment;
 
-    public DbMigratorHostedService(IHostApplicationLifetime hostApplicationLifetime, IConfiguration configuration)
+    public DbMigratorHostedService(
+        IHostApplicationLifetime hostApplicationLifetime,
+        IConfiguration configuration,
+        IHostEnvironment hostEnvironment)
     {
         _hostApplicationLifetime = hostApplicationLifetime;
         _configuration = configuration;
+        _hostEnvironment = hostEnvironment;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -28,6 +33,7 @@ public class DbMigratorHostedService : IHostedService
            options.Services.ReplaceConfiguration(_configuration);
            options.UseAutofac();
            options.Services.AddLogging(c => c.AddSerilog());
+           options.Services.AddSingleton(_hostEnvironment);
            options.AddDataMigrationEnvironment();
         }))
         {

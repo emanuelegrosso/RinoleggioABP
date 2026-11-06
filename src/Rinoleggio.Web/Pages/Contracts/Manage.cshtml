@@ -1,0 +1,88 @@
+@page
+@using Rinoleggio.Listings
+@using Rinoleggio.Web.Pages.Contracts
+@model Rinoleggio.Web.Pages.Contracts.ManageModel
+@{ ViewBag.Title = "Gestione annunci"; }
+<div class="container py-3">
+    <h1 class="h3 mb-3">Gestione annunci (backoffice)</h1>
+    <form method="get" class="card mb-3"><div class="card-body row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label">Stato</label>
+            <select asp-for="Filters.BusinessStatus" class="form-select" asp-items="@(ContractFormHelper.GetBusinessStatusFilterItems())">
+                <option value="">Tutti (escl. cancellati)</option>
+            </select>
+        </div>
+        @if (Model.CanRestore)
+        {
+            <div class="col-md-3 form-check">
+                <input class="form-check-input" type="checkbox" asp-for="Filters.IncludeDeleted" value="true" />
+                <label class="form-check-label" asp-for="Filters.IncludeDeleted">Solo cancellati</label>
+            </div>
+        }
+        <div class="col-md-3">
+            <label class="form-label">Richieste</label>
+            <select asp-for="Filters.HasLeads" class="form-select">
+                <option value="">Indifferente</option>
+                <option value="true">Con richieste</option>
+                <option value="false">Senza richieste</option>
+            </select>
+        </div>
+        <div class="col-auto"><button type="submit" class="btn btn-primary">Filtra</button></div>
+    </div></form>
+    <table class="table table-striped align-middle">
+        <thead><tr><th>Titolo</th><th>Venditore</th><th>Canone</th><th>Stato</th><th>Richieste</th><th>Azioni</th></tr></thead>
+        <tbody>
+        @foreach (var item in Model.Results.Items)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@(item.SellerVisibleName ?? "—")</td>
+                <td>@item.MonthlyFee.ToString("N2") €</td>
+                <td>@ContractFormHelper.GetListingDisplayStatus(item.BusinessStatus, item.IsPublished)</td>
+                <td>@item.TotalLeadCount</td>
+                <td class="text-nowrap">
+                    <a asp-page="/Contracts/Detail" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Apri</a>
+                    <a asp-page="/Contracts/Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Modifica</a>
+                    @if (item.BusinessStatus == ListingBusinessStatus.Deleted && Model.CanRestore)
+                    {
+                        <form method="post" asp-page-handler="Restore" class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button class="btn btn-sm btn-success">Ripristina</button>
+                        </form>
+                    }
+                    else if (item.BusinessStatus == ListingBusinessStatus.Suspended)
+                    {
+                        <form method="post" asp-page-handler="Reactivate" class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button class="btn btn-sm btn-outline-success">Riattiva</button>
+                        </form>
+                    }
+                    else if (item.BusinessStatus == ListingBusinessStatus.Active)
+                    {
+                        <form method="post" asp-page-handler="Suspend" class="d-inline-flex gap-1">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <input type="text" name="reason" class="form-control form-control-sm" placeholder="Motivo" required style="max-width:120px;" />
+                            <button class="btn btn-sm btn-warning">Sospendi</button>
+                        </form>
+                        <form method="post" asp-page-handler="Reserve" class="d-inline"><input type="hidden" name="id" value="@item.Id" /><button class="btn btn-sm btn-outline-warning">Riservato</button></form>
+                    }
+                    @if (item.BusinessStatus != ListingBusinessStatus.Deleted)
+                    {
+                        <form method="post" asp-page-handler="Withdraw" class="d-inline-flex gap-1 mt-1">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <input type="text" name="reason" class="form-control form-control-sm" placeholder="Motivo ritiro" required style="max-width:120px;" />
+                            <button class="btn btn-sm btn-outline-secondary">Ritira</button>
+                        </form>
+                        <form method="post" asp-page-handler="Close" class="d-inline"><input type="hidden" name="id" value="@item.Id" /><button class="btn btn-sm btn-outline-dark">Chiuso</button></form>
+                        <form method="post" asp-page-handler="Delete" class="d-inline-flex gap-1 mt-1">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <input type="text" name="reason" class="form-control form-control-sm" placeholder="Motivo cancellazione" required style="max-width:120px;" />
+                            <button class="btn btn-sm btn-danger">Cancella</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

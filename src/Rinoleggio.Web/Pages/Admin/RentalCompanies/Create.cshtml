@@ -1,0 +1,12 @@
+@page
+@model Rinoleggio.Web.Pages.Admin.RentalCompanies.CreateModel
+@{ ViewBag.Title = "Nuova società"; }
+<div class="container py-3">
+    <h1 class="h3 mb-3">Nuova società di noleggio</h1>
+    <form method="post" class="card"><div class="card-body row g-3">
+        <div class="col-md-6"><label class="form-label">Nome</label><input asp-for="Company.Name" class="form-control" /></div>
+        <div class="col-md-6"><label class="form-label">Sito web</label><input asp-for="Company.WebsiteUrl" class="form-control" /></div>
+        <div class="col-12 form-check"><input asp-for="Company.IsActive" class="form-check-input" /><label class="form-check-label" asp-for="Company.IsActive">Attiva</label></div>
+        <div class="col-12 d-flex gap-2"><button type="submit" class="btn btn-primary">Salva</button><a asp-page="./Index" class="btn btn-outline-secondary">Annulla</a></div>
+    </div></form>
+</div>

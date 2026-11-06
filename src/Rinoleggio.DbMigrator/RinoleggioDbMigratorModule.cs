@@ -7,7 +7,7 @@ namespace Rinoleggio.DbMigrator;
 [DependsOn(
     typeof(AbpAutofacModule),
     typeof(RinoleggioEntityFrameworkCoreModule),
-    typeof(RinoleggioApplicationContractsModule)
+    typeof(RinoleggioApplicationModule)
 )]
 public class RinoleggioDbMigratorModule : AbpModule
 {

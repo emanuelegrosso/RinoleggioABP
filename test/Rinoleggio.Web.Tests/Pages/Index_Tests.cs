@@ -12,5 +12,8 @@ public class Index_Tests : RinoleggioWebTestBase
     {
         var response = await GetResponseAsStringAsync("/");
         response.ShouldNotBeNull();
+        response.ShouldContain("Rental contract takeovers");
+        response.ShouldNotContain("Getting Started");
+        response.ShouldNotContain("abp.io/docs");
     }
 }

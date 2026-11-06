@@ -17,7 +17,7 @@
   <ItemGroup>
     <PackageReference Include="Volo.Abp.Autofac" Version="10.7.0" />
     <ProjectReference Include="..\Rinoleggio.EntityFrameworkCore\Rinoleggio.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="..\Rinoleggio.Application.Contracts\Rinoleggio.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Rinoleggio.Application\Rinoleggio.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

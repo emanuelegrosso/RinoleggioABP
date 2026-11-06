@@ -1,0 +1,45 @@
+@using Rinoleggio.Web.Pages.Contracts
+@model (Rinoleggio.Contracts.CreateUpdateContractDto Contract, Rinoleggio.Contracts.ContractLookupsDto Lookups)
+
+<div class="row g-3">
+    <div class="col-md-8"><label class="form-label">Titolo</label><input asp-for="Contract.Title" class="form-control" /><span asp-validation-for="Contract.Title" class="text-danger small"></span></div>
+    <div class="col-md-4"><label class="form-label">Provincia</label><select asp-for="Contract.ProvinceId" class="form-select" asp-items="@(new SelectList(Model.Lookups.Provinces, "Id", "Name"))"></select><span asp-validation-for="Contract.ProvinceId" class="text-danger small"></span></div>
+    <div class="col-12"><label class="form-label">Descrizione HTML</label><textarea asp-for="Contract.DescriptionHtml" class="form-control" rows="3"></textarea></div>
+    <div class="col-md-4"><label class="form-label">Società di noleggio</label><select asp-for="Contract.RentalCompanyId" class="form-select" asp-items="@(new SelectList(Model.Lookups.RentalCompanies, "Id", "Name"))"></select><span asp-validation-for="Contract.RentalCompanyId" class="text-danger small"></span></div>
+    <div class="col-md-4"><label class="form-label">Scadenza contratto</label><input asp-for="Contract.EndDate" class="form-control" type="date" /><span asp-validation-for="Contract.EndDate" class="text-danger small"></span></div>
+    <div class="col-md-4"><label class="form-label">Canone mensile</label><input asp-for="Contract.MonthlyFee" class="form-control" type="number" step="0.01" /><span asp-validation-for="Contract.MonthlyFee" class="text-danger small"></span></div>
+    <div class="col-md-3"><label class="form-label">Anticipo</label><input asp-for="Contract.InitialPayment" class="form-control" type="number" step="0.01" /></div>
+    <div class="col-md-3 form-check mt-4"><input class="form-check-input" asp-for="Contract.VatIncluded" /><label class="form-check-label" asp-for="Contract.VatIncluded">IVA inclusa</label></div>
+    <div class="col-md-3"><label class="form-label">Km totali</label><input asp-for="Contract.TotalKm" class="form-control" type="number" /></div>
+    <div class="col-md-3"><label class="form-label">Km attuali</label><input asp-for="Contract.CurrentKm" class="form-control" type="number" /></div>
+    <div class="col-md-4"><label class="form-label">Marca</label><select asp-for="Contract.BrandId" class="form-select" asp-items="@(new SelectList(Model.Lookups.Brands, "Id", "Name"))"></select><span asp-validation-for="Contract.BrandId" class="text-danger small"></span></div>
+    <div class="col-md-4"><label class="form-label">Modello</label><input asp-for="Contract.Model" class="form-control" /><span asp-validation-for="Contract.Model" class="text-danger small"></span></div>
+    <div class="col-md-4"><label class="form-label">Versione</label><input asp-for="Contract.Version" class="form-control" /></div>
+    <div class="col-md-4"><label class="form-label">Alimentazione</label><select asp-for="Contract.FuelType" class="form-select" asp-items="@(ContractFormHelper.GetFuelTypeItems())"></select></div>
+    <div class="col-md-4"><label class="form-label">Cambio</label><select asp-for="Contract.Transmission" class="form-select" asp-items="@(ContractFormHelper.GetTransmissionItems())"></select></div>
+    <div class="col-md-4"><label class="form-label">Anno immatricolazione</label><input asp-for="Contract.RegistrationYear" class="form-control" type="number" /></div>
+    <div class="col-md-4"><label class="form-label">Contributo subentro</label><select asp-for="Contract.TransferContributionType" class="form-select" asp-items="@(ContractFormHelper.GetContributionTypeItems())"></select></div>
+    <div class="col-md-4"><label class="form-label">Importo contributo</label><input asp-for="Contract.TransferContributionAmount" class="form-control" type="number" step="0.01" /></div>
+    <div class="col-md-12"><label class="form-label">Servizi inclusi</label>
+        <div class="row g-2">
+            <div class="col-md-4 form-check"><input class="form-check-input" asp-for="Contract.MaintenanceIncluded" /><label class="form-check-label" asp-for="Contract.MaintenanceIncluded">Manutenzione</label></div>
+            <div class="col-md-4 form-check"><input class="form-check-input" asp-for="Contract.InsuranceIncluded" /><label class="form-check-label" asp-for="Contract.InsuranceIncluded">Assicurazione</label></div>
+            <div class="col-md-4 form-check"><input class="form-check-input" asp-for="Contract.RoadsideAssistanceIncluded" /><label class="form-check-label" asp-for="Contract.RoadsideAssistanceIncluded">Assistenza stradale</label></div>
+            <div class="col-md-4 form-check"><input class="form-check-input" asp-for="Contract.ReplacementCarIncluded" /><label class="form-check-label" asp-for="Contract.ReplacementCarIncluded">Auto sostitutiva</label></div>
+            <div class="col-md-4 form-check"><input class="form-check-input" asp-for="Contract.TiresIncluded" /><label class="form-check-label" asp-for="Contract.TiresIncluded">Pneumatici</label></div>
+            <div class="col-md-4 form-check"><input class="form-check-input" asp-for="Contract.RoadTaxIncluded" /><label class="form-check-label" asp-for="Contract.RoadTaxIncluded">Bollo</label></div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <label class="form-label">Tipi assicurazione</label>
+        <div class="row g-2">
+            @foreach (var kind in ContractFormHelper.InsuranceKinds)
+            {
+                <div class="col-md-4 form-check">
+                    <input class="form-check-input" type="checkbox" name="Contract.InsuranceKinds" value="@kind.Value" @(Model.Contract.InsuranceKinds.Contains(kind.Value) ? "checked" : null) />
+                    <label class="form-check-label">@kind.Label</label>
+                </div>
+            }
+        </div>
+    </div>
+</div>

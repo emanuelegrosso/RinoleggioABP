@@ -20,8 +20,29 @@ public class RinoleggioPermissionDefinitionProvider : PermissionDefinitionProvid
         authorsPermission.AddChild(RinoleggioPermissions.Authors.Create, L("Permission:Authors.Create"));
         authorsPermission.AddChild(RinoleggioPermissions.Authors.Edit, L("Permission:Authors.Edit"));
         authorsPermission.AddChild(RinoleggioPermissions.Authors.Delete, L("Permission:Authors.Delete"));
-        //Define your own permissions here. Example:
-        //myGroup.AddPermission(RinoleggioPermissions.MyPermission1, L("Permission:MyPermission1"));
+
+        var contracts = myGroup.AddPermission(RinoleggioPermissions.Contracts.Default, L("Permission:Contracts"));
+        contracts.AddChild(RinoleggioPermissions.Contracts.Create, L("Permission:Contracts.Create"));
+        contracts.AddChild(RinoleggioPermissions.Contracts.Edit, L("Permission:Contracts.Edit"));
+        contracts.AddChild(RinoleggioPermissions.Contracts.ViewOwn, L("Permission:Contracts.ViewOwn"));
+        contracts.AddChild(RinoleggioPermissions.Contracts.ManageAll, L("Permission:Contracts.ManageAll"));
+        contracts.AddChild(RinoleggioPermissions.Contracts.Suspend, L("Permission:Contracts.Suspend"));
+        contracts.AddChild(RinoleggioPermissions.Contracts.Close, L("Permission:Contracts.Close"));
+        contracts.AddChild(RinoleggioPermissions.Contracts.Delete, L("Permission:Contracts.Delete"));
+        contracts.AddChild(RinoleggioPermissions.Contracts.Restore, L("Permission:Contracts.Restore"));
+
+        myGroup.AddPermission(RinoleggioPermissions.Profile.Default, L("Permission:Profile"));
+
+        var leads = myGroup.AddPermission(RinoleggioPermissions.Leads.Default, L("Permission:Leads"));
+        leads.AddChild(RinoleggioPermissions.Leads.Create, L("Permission:Leads.Create"));
+        leads.AddChild(RinoleggioPermissions.Leads.ViewOwn, L("Permission:Leads.ViewOwn"));
+        leads.AddChild(RinoleggioPermissions.Leads.ViewAll, L("Permission:Leads.ViewAll"));
+        leads.AddChild(RinoleggioPermissions.Leads.Manage, L("Permission:Leads.Manage"));
+
+        var lookups = myGroup.AddPermission(RinoleggioPermissions.Lookups.Default, L("Permission:Lookups"));
+        lookups.AddChild(RinoleggioPermissions.Lookups.Create, L("Permission:Lookups.Create"));
+        lookups.AddChild(RinoleggioPermissions.Lookups.Edit, L("Permission:Lookups.Edit"));
+        lookups.AddChild(RinoleggioPermissions.Lookups.Delete, L("Permission:Lookups.Delete"));
     }
 
     private static LocalizableString L(string name)

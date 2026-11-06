@@ -1,0 +1,132 @@
+@page
+@using Rinoleggio.Listings
+@using Rinoleggio.Web.Pages.Contracts
+@model Rinoleggio.Web.Pages.Contracts.MineModel
+@{ ViewBag.Title = "I miei annunci"; }
+<div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div>
+            <h1 class="h3 mb-1">I miei annunci</h1>
+            <p class="text-muted mb-0">@Model.Results.TotalCount annunci</p>
+        </div>
+        @if (Model.CanCreateListing)
+        {
+            <a class="btn btn-primary" asp-page="/Contracts/Create">Nuovo contratto</a>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ActionFlash))
+    {
+        <div class="alert alert-success">Operazione completata.</div>
+    }
+
+    @if (Model.Results.TotalCount == 0)
+    {
+        <div class="alert alert-light border">Non hai ancora annunci. Usa &quot;Nuovo contratto&quot; per crearne uno.</div>
+    }
+    else
+    {
+        <table class="table table-striped align-middle">
+            <thead>
+            <tr>
+                <th>Titolo</th>
+                <th>Canone</th>
+                <th>Scadenza</th>
+                <th>Stato</th>
+                <th>Richieste</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Results.Items)
+            {
+                <tr>
+                    <td>
+                        @item.Title
+                        @if (!string.IsNullOrWhiteSpace(item.StatusReason))
+                        {
+                            <div class="small text-muted">Motivo: @item.StatusReason</div>
+                        }
+                    </td>
+                    <td>@ContractFormHelper.FormatMoney(item.MonthlyFee)</td>
+                    <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
+                    <td>@ContractFormHelper.GetListingDisplayStatus(item.BusinessStatus, item.IsPublished)</td>
+                    <td>
+                        @if (item.TotalLeadCount > 0)
+                        {
+                            <a asp-page="/Leads/Received" asp-route-listingId="@item.Id">@item.TotalLeadCount (@item.OpenLeadCount aperte)</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">0</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex flex-wrap gap-1 justify-content-end">
+                            <a asp-page="/Contracts/Detail" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Dettaglio</a>
+                            @if (Model.CanEditListing && item.BusinessStatus is not (ListingBusinessStatus.Closed or ListingBusinessStatus.Deleted))
+                            {
+                                <a asp-page="/Contracts/Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Modifica</a>
+                            }
+                            @if (!item.IsPublished && item.BusinessStatus == ListingBusinessStatus.Active)
+                            {
+                                <form method="post" asp-page-handler="Publish" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-primary">Pubblica</button>
+                                </form>
+                            }
+                            @if (item.BusinessStatus == ListingBusinessStatus.Withdrawn && item.StatusChangedBy == StatusChangedBy.Seller)
+                            {
+                                <form method="post" asp-page-handler="Republish" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-success">Ripubblica</button>
+                                </form>
+                            }
+                            @if (item.BusinessStatus == ListingBusinessStatus.Active && item.IsPublished)
+                            {
+                                <form method="post" asp-page-handler="Reserve" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-warning">Riservato</button>
+                                </form>
+                            }
+                            @if (item.BusinessStatus == ListingBusinessStatus.Reserved)
+                            {
+                                <form method="post" asp-page-handler="ClearReservation" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Disponibile</button>
+                                </form>
+                            }
+                        </div>
+                        @if (Model.CanEditListing && item.BusinessStatus is not (ListingBusinessStatus.Closed or ListingBusinessStatus.Deleted or ListingBusinessStatus.Suspended))
+                        {
+                            <details class="mt-2 text-start">
+                                <summary class="small text-muted">Altre azioni</summary>
+                                <form method="post" asp-page-handler="Withdraw" class="mt-2">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="text" name="reason" class="form-control form-control-sm mb-1" placeholder="Motivo ritiro" required />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Ritira</button>
+                                </form>
+                                @if (Model.CanClose)
+                                {
+                                    <form method="post" asp-page-handler="Close" class="mt-2">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-dark">Segna chiuso</button>
+                                    </form>
+                                }
+                                @if (Model.CanDelete)
+                                {
+                                    <form method="post" asp-page-handler="Delete" class="mt-2">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <input type="text" name="reason" class="form-control form-control-sm mb-1" placeholder="Motivo cancellazione" required />
+                                        <button type="submit" class="btn btn-sm btn-danger">Cancella</button>
+                                    </form>
+                                }
+                            </details>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>

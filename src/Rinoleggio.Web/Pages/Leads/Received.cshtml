@@ -1,0 +1,30 @@
+@page
+@using Rinoleggio.Web.Pages.Leads
+@model Rinoleggio.Web.Pages.Leads.ReceivedModel
+@{ ViewBag.Title = "Richieste ricevute"; }
+<div class="container py-3">
+    <h1 class="h3 mb-3">Richieste ricevute</h1>
+    <p class="text-muted small">Vedi messaggio e nome dell&apos;acquirente. I recapiti sono gestiti dal backoffice.</p>
+    @if (Model.Results.TotalCount == 0)
+    {
+        <div class="alert alert-light border">Nessuna richiesta sui tuoi annunci.</div>
+    }
+    else
+    {
+        <table class="table table-striped align-middle">
+            <thead><tr><th>Annuncio</th><th>Acquirente</th><th>Messaggio</th><th>Stato</th><th>Data</th></tr></thead>
+            <tbody>
+            @foreach (var lead in Model.Results.Items)
+            {
+                <tr>
+                    <td><a asp-page="/Contracts/Detail" asp-route-id="@lead.ListingId">@(lead.ListingTitle ?? "Annuncio")</a></td>
+                    <td>@(lead.BuyerVisibleName ?? lead.BuyerUserName ?? "Utente")</td>
+                    <td>@lead.Message</td>
+                    <td>@LeadFormHelper.GetStatusLabel(lead.Status)</td>
+                    <td>@lead.CreationTime.ToLocalTime().ToString("g")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>

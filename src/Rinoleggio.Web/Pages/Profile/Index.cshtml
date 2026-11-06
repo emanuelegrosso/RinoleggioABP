@@ -1,0 +1,19 @@
+@page
+@using Rinoleggio.Users
+@model Rinoleggio.Web.Pages.Profile.IndexModel
+@{ ViewBag.Title = "Profilo"; }
+<div class="container py-3">
+    <h1 class="h3 mb-3">Il mio profilo</h1>
+    <form method="post" class="card"><div class="card-body">
+        <div class="mb-2"><label class="form-label">Nome visibile</label><input asp-for="Input.FullName" class="form-control" /></div>
+        <div class="mb-2"><label class="form-label">Telefono (privato)</label><input asp-for="Input.PhoneNumber" class="form-control" /></div>
+        <div class="mb-2"><label class="form-label">Tipo account</label>
+            <select asp-for="Input.AccountType" class="form-select">
+                <option value="@AccountType.Private">Privato</option>
+                <option value="@AccountType.Business">Azienda</option>
+            </select>
+        </div>
+        <div class="form-check mb-3"><input class="form-check-input" asp-for="Input.PrivacyConsent" /><label class="form-check-label" asp-for="Input.PrivacyConsent">Consenso privacy</label></div>
+        <button type="submit" class="btn btn-primary">Salva profilo</button>
+    </div></form>
+</div>

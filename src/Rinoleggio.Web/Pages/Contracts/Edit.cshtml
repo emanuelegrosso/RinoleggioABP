@@ -1,0 +1,128 @@
+@page "{id:guid}"
+@using Rinoleggio.Listings
+@using Rinoleggio.Web.Pages.Contracts
+@model Rinoleggio.Web.Pages.Contracts.EditModel
+@{ ViewBag.Title = "Modifica contratto"; }
+<div class="container py-3">
+    <h1 class="h3 mb-3">Modifica contratto</h1>
+    @if (Model.ContractCreated)
+    {
+        <div class="alert alert-success" role="status">
+            Annuncio creato. Completa i dati se serve e carica le immagini qui sotto.
+        </div>
+    }
+    @if (Model.VisibilityFlash == "hidden")
+    {
+        <div class="alert alert-info" role="status">Annuncio nascosto dalla ricerca pubblica. Puoi ripubblicarlo quando vuoi.</div>
+    }
+    else if (Model.VisibilityFlash == "visible")
+    {
+        <div class="alert alert-success" role="status">Annuncio visibile nella ricerca pubblica.</div>
+    }
+    else if (Model.VisibilityFlash == "available")
+    {
+        <div class="alert alert-success" role="status">Annuncio di nuovo disponibile in ricerca.</div>
+    }
+    else if (!string.IsNullOrEmpty(Model.VisibilityErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">@Model.VisibilityErrorMessage</div>
+    }
+    <form method="post" class="card mb-3"><div class="card-body">
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+        <partial name="_ContractForm" model="(Model.Contract, Model.Lookups)" />
+        <div class="mt-3"><button type="submit" class="btn btn-primary">Salva</button> <a asp-page="/Contracts/Detail" asp-route-id="@Model.Id" class="btn btn-link">Annulla</a></div>
+    </div></form>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h2 class="h6">Immagini annuncio</h2>
+            <p class="small text-muted mb-3">
+                @Model.Images.Count / @Model.MaxListingImages immagini · JPG, PNG o WebP, max 5 MB ciascuna
+            </p>
+            @if (Model.Images.Count == 0)
+            {
+                <p class="text-muted mb-3">Nessuna immagine caricata.</p>
+            }
+            else
+            {
+                <div class="row g-3 mb-3">
+                    @foreach (var img in Model.Images)
+                    {
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="border rounded p-2 h-100 d-flex flex-column">
+                                <img src="@ContractFormHelper.ImageUrl(img.StoragePathOrBlobId)" class="img-fluid rounded mb-2 flex-grow-0" alt="" style="height:120px;width:100%;object-fit:cover;" />
+                                <form method="post" asp-page-handler="DeleteImage" class="mt-auto">
+                                    <input type="hidden" name="imageId" value="@img.Id" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('Eliminare questa immagine?');">Elimina</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            @if (Model.CanUploadMoreImages)
+            {
+                <form method="post" asp-page="EditImages" enctype="multipart/form-data">
+                    <input type="hidden" name="ListingId" value="@Model.Id" />
+                    <input type="file" name="Upload" accept=".jpg,.jpeg,.png,.webp" class="form-control mb-2" required />
+                    <button type="submit" class="btn btn-outline-secondary">Carica immagine</button>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-secondary py-2 small mb-0">Limite raggiunto. Elimina un&apos;immagine per caricarne un&apos;altra.</div>
+            }
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h2 class="h6">Visibilità in ricerca</h2>
+            @if (Model.BusinessStatus == ListingBusinessStatus.Reserved)
+            {
+                <p class="small text-muted mb-3">L&apos;annuncio è <strong>riservato</strong> e non compare in ricerca. Puoi tornare disponibile se il subentro non si concretizza.</p>
+                <form method="post" asp-page-handler="ClearReservation" class="d-inline">
+                    <button type="submit" class="btn btn-outline-primary">Torna disponibile</button>
+                </form>
+            }
+            else if (Model.CanToggleSearchVisibility)
+            {
+                <p class="small text-muted mb-3">
+                    Stato attuale:
+                    @if (Model.IsPublished)
+                    {
+                        <span class="text-success">Visibile</span><text> — compare nella ricerca pubblica.</text>
+                    }
+                    else
+                    {
+                        <span class="text-warning">Nascosto</span><text> — non compare in ricerca; resta raggiungibile dal link al dettaglio.</text>
+                    }
+                </p>
+                @if (Model.IsPublished)
+                {
+                    <form method="post" asp-page-handler="Unpublish" class="d-inline">
+                        <button type="submit" class="btn btn-outline-secondary" onclick="return confirm('Nascondere l\'annuncio dalla ricerca?');">Nascondi dalla ricerca</button>
+                    </form>
+                }
+                else
+                {
+                    <form method="post" asp-page-handler="PublishListing" class="d-inline">
+                        <button type="submit" class="btn btn-outline-primary">Pubblica in ricerca</button>
+                    </form>
+                }
+            }
+            else
+            {
+                <p class="small text-muted mb-0">
+                    Stato: @ContractFormHelper.GetBusinessStatusLabel(Model.BusinessStatus).
+                    @(Model.IsPublished ? "Visibile in ricerca." : "Non in ricerca.")
+                    Non puoi cambiare la visibilità finché l&apos;annuncio è chiuso, sospeso o eliminato.
+                </p>
+            }
+        </div>
+    </div>
+    <form method="post" asp-page-handler="Withdraw" class="card"><div class="card-body">
+        <h2 class="h6">Ritira annuncio</h2>
+        <input type="hidden" asp-for="Id" />
+        <div class="mb-2"><label class="form-label">Motivo</label><textarea asp-for="Withdraw.Reason" class="form-control" rows="2"></textarea></div>
+        <button type="submit" class="btn btn-outline-danger">Ritira annuncio</button>
+    </div></form>
+</div>

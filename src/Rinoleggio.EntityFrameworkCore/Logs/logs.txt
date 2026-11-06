@@ -1,0 +1,64 @@
+2026-11-05 16:59:16.071 +01:00 [INF] Started database migrations...
+2026-11-05 16:59:17.141 +01:00 [WRN] Entity 'Listing' has a global query filter defined and is the required end of a relationship with the entity 'Lead'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-11-05 16:59:18.284 +01:00 [ERR] Failed executing DbCommand (3ms) [Parameters=[@names1='?' (Size = 36), @names2='?' (Size = 26), @names3='?' (Size = 31), @names4='?' (Size = 26), @names5='?' (Size = 17), @names6='?' (Size = 24), @names7='?' (Size = 24), @names8='?' (Size = 24), @names9='?' (Size = 35), @names10='?' (Size = 17), @names11='?' (Size = 24), @names12='?' (Size = 24), @names13='?' (Size = 36), @names14='?' (Size = 24), @names15='?' (Size = 35), @names16='?' (Size = 16), @names17='?' (Size = 23), @names18='?' (Size = 21), @names19='?' (Size = 23), @names20='?' (Size = 18), @names21='?' (Size = 25), @names22='?' (Size = 23), @names23='?' (Size = 25), @names24='?' (Size = 20), @names25='?' (Size = 27), @names26='?' (Size = 25), @names27='?' (Size = 30), @names28='?' (Size = 28), @names29='?' (Size = 16), @names30='?' (Size = 23), @names31='?' (Size = 24), @names32='?' (Size = 24), @names33='?' (Size = 23), @names34='?' (Size = 18), @names35='?' (Size = 25), @names36='?' (Size = 23), @names37='?' (Size = 25), @names38='?' (Size = 25), @names39='?' (Size = 25), @names40='?' (Size = 25), @providerName='?' (Size = 1), @providerKey='?' (Size = 5)], CommandType='"Text"', CommandTimeout='30']
+SELECT "a"."Id", "a"."Name", "a"."ProviderKey", "a"."ProviderName", "a"."TenantId"
+FROM "AbpPermissionGrants" AS "a"
+WHERE "a"."TenantId" IS NULL AND "a"."Name" IN (@names1, @names2, @names3, @names4, @names5, @names6, @names7, @names8, @names9, @names10, @names11, @names12, @names13, @names14, @names15, @names16, @names17, @names18, @names19, @names20, @names21, @names22, @names23, @names24, @names25, @names26, @names27, @names28, @names29, @names30, @names31, @names32, @names33, @names34, @names35, @names36, @names37, @names38, @names39, @names40) AND "a"."ProviderName" = @providerName AND "a"."ProviderKey" = @providerKey
+2026-11-05 16:59:18.299 +01:00 [ERR] An exception occurred while iterating over the results of a query for context type 'Volo.Abp.PermissionManagement.EntityFrameworkCore.PermissionManagementDbContext'.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: AbpPermissionGrants'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: AbpPermissionGrants'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+2026-11-05 16:59:41.971 +01:00 [INF] Started database migrations...
+2026-11-05 16:59:42.942 +01:00 [WRN] Entity 'Listing' has a global query filter defined and is the required end of a relationship with the entity 'Lead'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+2026-11-05 16:59:44.000 +01:00 [ERR] Failed executing DbCommand (2ms) [Parameters=[@names1='?' (Size = 36), @names2='?' (Size = 26), @names3='?' (Size = 31), @names4='?' (Size = 26), @names5='?' (Size = 17), @names6='?' (Size = 24), @names7='?' (Size = 24), @names8='?' (Size = 24), @names9='?' (Size = 35), @names10='?' (Size = 17), @names11='?' (Size = 24), @names12='?' (Size = 24), @names13='?' (Size = 36), @names14='?' (Size = 24), @names15='?' (Size = 35), @names16='?' (Size = 16), @names17='?' (Size = 23), @names18='?' (Size = 21), @names19='?' (Size = 23), @names20='?' (Size = 18), @names21='?' (Size = 25), @names22='?' (Size = 23), @names23='?' (Size = 25), @names24='?' (Size = 20), @names25='?' (Size = 27), @names26='?' (Size = 25), @names27='?' (Size = 30), @names28='?' (Size = 28), @names29='?' (Size = 16), @names30='?' (Size = 23), @names31='?' (Size = 24), @names32='?' (Size = 24), @names33='?' (Size = 23), @names34='?' (Size = 18), @names35='?' (Size = 25), @names36='?' (Size = 23), @names37='?' (Size = 25), @names38='?' (Size = 25), @names39='?' (Size = 25), @names40='?' (Size = 25), @providerName='?' (Size = 1), @providerKey='?' (Size = 5)], CommandType='"Text"', CommandTimeout='30']
+SELECT "a"."Id", "a"."Name", "a"."ProviderKey", "a"."ProviderName", "a"."TenantId"
+FROM "AbpPermissionGrants" AS "a"
+WHERE "a"."TenantId" IS NULL AND "a"."Name" IN (@names1, @names2, @names3, @names4, @names5, @names6, @names7, @names8, @names9, @names10, @names11, @names12, @names13, @names14, @names15, @names16, @names17, @names18, @names19, @names20, @names21, @names22, @names23, @names24, @names25, @names26, @names27, @names28, @names29, @names30, @names31, @names32, @names33, @names34, @names35, @names36, @names37, @names38, @names39, @names40) AND "a"."ProviderName" = @providerName AND "a"."ProviderKey" = @providerKey
+2026-11-05 16:59:44.011 +01:00 [ERR] An exception occurred while iterating over the results of a query for context type 'Volo.Abp.PermissionManagement.EntityFrameworkCore.PermissionManagementDbContext'.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: AbpPermissionGrants'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: AbpPermissionGrants'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)

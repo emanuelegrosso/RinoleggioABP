@@ -1,5 +1,8 @@
 using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Rinoleggio.Leads;
+using Rinoleggio.Listings;
 using Volo.Abp.Uow;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -43,6 +46,21 @@ public class RinoleggioEntityFrameworkCoreModule : AbpModule
                 /* Remove "includeAllEntities: true" to create
                  * default repositories only for aggregate roots */
             options.AddDefaultRepositories(includeAllEntities: true);
+
+            options.Entity<Listing>(listingOptions =>
+            {
+                listingOptions.DefaultWithDetailsFunc = query => query
+                    .Include(l => l.Contract).ThenInclude(c => c.RentalCompany)
+                    .Include(l => l.Vehicle).ThenInclude(v => v.Brand)
+                    .Include(l => l.Services).ThenInclude(s => s.InsuranceTypes)
+                    .Include(l => l.Province)
+                    .Include(l => l.Images);
+            });
+
+            options.Entity<Lead>(leadOptions =>
+            {
+                leadOptions.DefaultWithDetailsFunc = query => query.Include(l => l.Listing);
+            });
         });
 
         if (AbpStudioAnalyzeHelper.IsInAnalyzeMode)

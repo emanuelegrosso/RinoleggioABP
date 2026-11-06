@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Volo.Abp;
 using Volo.Abp.Authorization;
 using Volo.Abp.Autofac;
@@ -25,6 +29,19 @@ public class RinoleggioTestBaseModule : AbpModule
         });
 
         context.Services.AddAlwaysAllowAuthorization();
+
+        if (!context.Services.Any(x => x.ServiceType == typeof(IHostEnvironment)))
+        {
+            context.Services.AddSingleton<IHostEnvironment>(_ => new TestHostEnvironment());
+        }
+    }
+
+    private sealed class TestHostEnvironment : IHostEnvironment
+    {
+        public string EnvironmentName { get; set; } = Environments.Development;
+        public string ApplicationName { get; set; } = "Rinoleggio.Tests";
+        public string ContentRootPath { get; set; } = AppContext.BaseDirectory;
+        public IFileProvider ContentRootFileProvider { get; set; } = new NullFileProvider();
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)

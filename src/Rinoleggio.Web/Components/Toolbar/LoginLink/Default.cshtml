@@ -1,4 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @using Rinoleggio.Localization
+@using Volo.Abp.Users
 @inject IHtmlLocalizer<RinoleggioResource> L
-<a class="nav-link" role="button" href="~/Account/Login">Login</a>
+@inject ICurrentUser CurrentUser
+@if (!CurrentUser.IsAuthenticated)
+{
+    <a class="nav-link" role="button" href="~/Account/Register">@L["Register"]</a>
+    <a class="nav-link" role="button" href="~/Account/Login">@L["Login"]</a>
+}

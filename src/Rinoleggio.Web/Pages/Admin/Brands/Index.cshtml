@@ -1,0 +1,39 @@
+@page
+@using Rinoleggio.Permissions
+@model Rinoleggio.Web.Pages.Admin.Brands.IndexModel
+@inject Volo.Abp.Authorization.Permissions.IPermissionChecker PermissionChecker
+@{ ViewBag.Title = "Marche"; }
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Marche</h1>
+        @if (await PermissionChecker.IsGrantedAsync(RinoleggioPermissions.Lookups.Create))
+        {
+            <a class="btn btn-primary" asp-page="./Create">Nuova marca</a>
+        }
+    </div>
+    <table class="table table-striped">
+        <thead><tr><th>Nome</th><th>Ordine</th><th>Attiva</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var x in Model.Items.Items)
+        {
+            <tr>
+                <td>@x.Name</td>
+                <td>@x.SortOrder</td>
+                <td>@(x.IsActive ? "Sì" : "No")</td>
+                <td class="text-end text-nowrap">
+                    @if (await PermissionChecker.IsGrantedAsync(RinoleggioPermissions.Lookups.Edit))
+                    {
+                        <a class="btn btn-sm btn-outline-primary" asp-page="./Edit" asp-route-id="@x.Id">Modifica</a>
+                    }
+                    @if (await PermissionChecker.IsGrantedAsync(RinoleggioPermissions.Lookups.Delete))
+                    {
+                        <form method="post" asp-page-handler="Delete" class="d-inline" asp-route-id="@x.Id" onsubmit="return confirm('Eliminare questa marca?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Elimina</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

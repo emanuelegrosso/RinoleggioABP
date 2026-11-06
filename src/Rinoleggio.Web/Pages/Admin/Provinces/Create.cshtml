@@ -1,0 +1,13 @@
+@page
+@model Rinoleggio.Web.Pages.Admin.Provinces.CreateModel
+@{ ViewBag.Title = "Nuova provincia"; }
+<div class="container py-3">
+    <h1 class="h3 mb-3">Nuova provincia</h1>
+    <form method="post" class="card"><div class="card-body row g-3">
+        <div class="col-md-5"><label class="form-label">Nome</label><input asp-for="Province.Name" class="form-control" /></div>
+        <div class="col-md-2"><label class="form-label">Sigla</label><input asp-for="Province.Code" class="form-control" maxlength="2" /></div>
+        <div class="col-md-2"><label class="form-label">Ordine</label><input asp-for="Province.SortOrder" class="form-control" type="number" /></div>
+        <div class="col-md-3 form-check mt-4"><input asp-for="Province.IsActive" class="form-check-input" /><label class="form-check-label" asp-for="Province.IsActive">Attiva</label></div>
+        <div class="col-12 d-flex gap-2"><button type="submit" class="btn btn-primary">Salva</button><a asp-page="./Index" class="btn btn-outline-secondary">Annulla</a></div>
+    </div></form>
+</div>

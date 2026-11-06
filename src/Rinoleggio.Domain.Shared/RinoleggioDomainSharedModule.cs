@@ -43,7 +43,7 @@ public class RinoleggioDomainSharedModule : AbpModule
         Configure<AbpLocalizationOptions>(options =>
         {
             options.Resources
-                .Add<RinoleggioResource>("en")
+                .Add<RinoleggioResource>("it")
                 .AddBaseTypes(typeof(AbpValidationResource))
                 .AddVirtualJson("/Localization/Rinoleggio");
 

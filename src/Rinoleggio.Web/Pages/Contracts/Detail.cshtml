@@ -1,0 +1,226 @@
+@page "{id:guid}"
+@using System.Linq
+@using System.Net
+@using Rinoleggio.Listings
+@using Rinoleggio.Web.Pages.Contracts
+@model Rinoleggio.Web.Pages.Contracts.DetailModel
+@{
+    ViewBag.Title = Model.Contract.Title;
+    var services = ContractFormHelper.GetIncludedServiceLabels(Model.Contract);
+}
+<div class="container py-3">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a asp-page="/Contracts/Index">Ricerca contratti</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Contract.Title</li>
+        </ol>
+    </nav>
+
+    @if (Model.LeadSubmitted)
+    {
+        <div class="alert alert-success" role="status">
+            Richiesta inviata. Il venditore la vedrà nella sua area lead e potrà contattarti.
+        </div>
+    }
+
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="mb-3">
+                <h1 class="h3 mb-1">@Model.Contract.BrandName @Model.Contract.Model @Model.Contract.Version</h1>
+                <p class="text-muted mb-0">
+                    @Model.Contract.RentalCompanyName · @Model.Contract.ProvinceName · Immatricolazione @Model.Contract.RegistrationYear
+                    @if (!string.IsNullOrWhiteSpace(Model.Contract.SellerVisibleName))
+                    {
+                        <text> · Venditore: @Model.Contract.SellerVisibleName</text>
+                    }
+                </p>
+                @if (Model.Contract.BusinessStatus == ListingBusinessStatus.Reserved)
+                {
+                    <span class="badge text-bg-warning mt-2">Riservato</span>
+                }
+            </div>
+
+            @if (Model.Contract.Images.Count > 0)
+            {
+                <div class="row g-2 mb-3">
+                    @foreach (var img in Model.Contract.Images.OrderBy(x => x.SortOrder))
+                    {
+                        <div class="col-md-6">
+                            <img src="@ContractFormHelper.ImageUrl(img.StoragePathOrBlobId)" class="img-fluid rounded w-100" alt="@Model.Contract.Title" style="max-height:320px;object-fit:cover;" />
+                        </div>
+                    }
+                </div>
+            }
+            else if (!string.IsNullOrEmpty(Model.Contract.CoverImagePath))
+            {
+                <div class="mb-3">
+                    <img src="@ContractFormHelper.ImageUrl(Model.Contract.CoverImagePath)" class="img-fluid rounded w-100" alt="@Model.Contract.Title" style="max-height:320px;object-fit:cover;" />
+                </div>
+            }
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p class="fs-4 text-primary fw-bold mb-3">@ContractFormHelper.FormatMoney(Model.Contract.MonthlyFee) / mese</p>
+                    <dl class="row mb-0 small">
+                        <dt class="col-sm-4">Scadenza contratto</dt>
+                        <dd class="col-sm-8"><strong>@Model.Contract.EndDate.ToString("dd/MM/yyyy")</strong></dd>
+                        @if (Model.Contract.StartDate.HasValue)
+                        {
+                            <dt class="col-sm-4">Inizio contratto</dt>
+                            <dd class="col-sm-8">@Model.Contract.StartDate.Value.ToString("dd/MM/yyyy")</dd>
+                        }
+                        <dt class="col-sm-4">Anticipo</dt>
+                        <dd class="col-sm-8">@ContractFormHelper.FormatMoney(Model.Contract.InitialPayment)</dd>
+                        <dt class="col-sm-4">IVA</dt>
+                        <dd class="col-sm-8">@(Model.Contract.VatIncluded ? "Inclusa" : "Esclusa")</dd>
+                        <dt class="col-sm-4">Chilometri</dt>
+                        <dd class="col-sm-8">Totali @Model.Contract.TotalKm · attuali @Model.Contract.CurrentKm · residui @Model.Contract.RemainingKm</dd>
+                        @if (Model.Contract.ExcessKmRate.HasValue)
+                        {
+                            <dt class="col-sm-4">Eccedenza km</dt>
+                            <dd class="col-sm-8">@ContractFormHelper.FormatMoney(Model.Contract.ExcessKmRate.Value) / km</dd>
+                        }
+                        @if (Model.Contract.UnderKmRate.HasValue)
+                        {
+                            <dt class="col-sm-4">Rimborso km non percorsi</dt>
+                            <dd class="col-sm-8">@ContractFormHelper.FormatMoney(Model.Contract.UnderKmRate.Value) / km</dd>
+                        }
+                        <dt class="col-sm-4">Contributo subentro</dt>
+                        <dd class="col-sm-8">@ContractFormHelper.GetContributionTypeLabel(Model.Contract.TransferContributionType) · @ContractFormHelper.FormatMoney(Model.Contract.TransferContributionAmount)</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Veicolo</h2>
+                    <dl class="row mb-0 small">
+                        <dt class="col-sm-4">Alimentazione</dt>
+                        <dd class="col-sm-8">@ContractFormHelper.GetFuelTypeLabel(Model.Contract.FuelType)</dd>
+                        <dt class="col-sm-4">Cambio</dt>
+                        <dd class="col-sm-8">@ContractFormHelper.GetTransmissionLabel(Model.Contract.Transmission)</dd>
+                    </dl>
+                </div>
+            </div>
+
+            @if (services.Count > 0 || Model.Contract.InsuranceKinds.Count > 0)
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h2 class="h6 mb-3">Servizi inclusi</h2>
+                        @if (services.Count > 0)
+                        {
+                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                @foreach (var label in services)
+                                {
+                                    <span class="badge text-bg-light border">@label</span>
+                                }
+                            </div>
+                        }
+                        @if (Model.Contract.InsuranceKinds.Count > 0)
+                        {
+                            <p class="small text-muted mb-0">Coperture: @ContractFormHelper.FormatInsuranceKinds(Model.Contract.InsuranceKinds)</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.Contract.DescriptionHtml))
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h2 class="h6 mb-3">Descrizione</h2>
+                        <div class="contract-description">@Html.Raw(WebUtility.HtmlEncode(Model.Contract.DescriptionHtml ?? string.Empty).Replace("\n", "<br />"))</div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            @if (Model.IsOwner)
+            {
+                <div class="card mb-3 border-primary">
+                    <div class="card-body">
+                        <h2 class="h6 text-primary">Il tuo annuncio</h2>
+                        <p class="small text-muted mb-2">Gestisci pubblicazione e richieste di subentro da qui.</p>
+                        <dl class="row small mb-3">
+                            <dt class="col-5">Stato</dt>
+                            <dd class="col-7">@ContractFormHelper.GetBusinessStatusLabel(Model.Contract.BusinessStatus)</dd>
+                            <dt class="col-5">Pubblicato</dt>
+                            <dd class="col-7">@(Model.Contract.IsPublished ? "Sì" : "No")</dd>
+                        </dl>
+                        @if (!Model.IsListingEligibleForLeads)
+                        {
+                            <div class="alert alert-warning py-2 small mb-3">
+                                L&apos;annuncio non è visibile in ricerca o non accetta richieste finché non è attivo, pubblicato e con scadenza futura.
+                            </div>
+                        }
+                        <div class="d-grid gap-2">
+                            @if (Model.CanEdit)
+                            {
+                                <a class="btn btn-primary" asp-page="/Contracts/Edit" asp-route-id="@Model.Contract.Id">Modifica annuncio</a>
+                            }
+                            <a class="btn btn-outline-secondary" asp-page="/Contracts/Mine">I miei annunci</a>
+                            @if (Model.CanViewOwnLeads)
+                            {
+                                <a class="btn btn-outline-primary" asp-page="/Leads/Received">Richieste ricevute</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.CanSendLead)
+            {
+                <form method="post" asp-page-handler="Lead" class="card mb-3">
+                    <div class="card-body">
+                        <h2 class="h6">Richiesta di subentro</h2>
+                        <p class="small text-muted">Scrivi al venditore: riceverà la tua richiesta nella sua area lead.</p>
+                        @if (!string.IsNullOrEmpty(Model.LeadErrorMessage))
+                        {
+                            <div class="alert alert-danger py-2 small" role="alert">@Model.LeadErrorMessage</div>
+                        }
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
+                        <div class="mb-2">
+                            <textarea asp-for="Lead.Message" class="form-control" rows="4" placeholder="Messaggio (10-1000 caratteri)"></textarea>
+                            <span asp-validation-for="Lead.Message" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-2">
+                            <input asp-for="Lead.Phone" class="form-control" placeholder="Telefono (opzionale)" />
+                            <span asp-validation-for="Lead.Phone" class="text-danger small"></span>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" asp-for="Lead.PrivacyConsent" />
+                            <label class="form-check-label" asp-for="Lead.PrivacyConsent">Acconsento al trattamento dei dati</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Invia richiesta</button>
+                    </div>
+                </form>
+            }
+            else if (!(User.Identity?.IsAuthenticated ?? false))
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h2 class="h6">Richiesta di subentro</h2>
+                        <p class="small text-muted mb-3">Accedi o registrati per contattare il venditore e inviare una richiesta su questo contratto.</p>
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-primary" asp-page="/Account/Login" asp-route-returnUrl="@(Request.Path + Request.QueryString)">Accedi</a>
+                            <a class="btn btn-outline-primary" asp-page="/Account/Register" asp-route-returnUrl="@(Request.Path + Request.QueryString)">Registrati</a>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.HasLeadsCreatePermission && !Model.IsListingEligibleForLeads)
+            {
+                <div class="alert alert-secondary mb-3">
+                    Questo annuncio non accetta richieste di subentro al momento (non pubblicato, non attivo o contratto scaduto).
+                </div>
+            }
+            else if (!Model.HasLeadsCreatePermission)
+            {
+                <div class="alert alert-info mb-3">
+                    Il tuo profilo non può inviare richieste di subentro. Contatta l&apos;amministratore se pensi sia un errore.
+                </div>
+            }
+        </div>
+    </div>
+</div>

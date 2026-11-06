@@ -1,0 +1,28 @@
+@page
+@using Rinoleggio.Web.Pages.Leads
+@model Rinoleggio.Web.Pages.Leads.SentModel
+@{ ViewBag.Title = "Le mie richieste"; }
+<div class="container py-3">
+    <h1 class="h3 mb-3">Le mie richieste</h1>
+    @if (Model.Results.TotalCount == 0)
+    {
+        <div class="alert alert-light border">Non hai ancora inviato richieste.</div>
+    }
+    else
+    {
+        <table class="table table-striped align-middle">
+            <thead><tr><th>Annuncio</th><th>Messaggio</th><th>Stato</th><th>Data</th></tr></thead>
+            <tbody>
+            @foreach (var lead in Model.Results.Items)
+            {
+                <tr>
+                    <td><a asp-page="/Contracts/Detail" asp-route-id="@lead.ListingId">@(lead.ListingTitle ?? "Annuncio")</a></td>
+                    <td>@lead.Message</td>
+                    <td>@LeadFormHelper.GetStatusLabel(lead.Status)</td>
+                    <td>@lead.CreationTime.ToLocalTime().ToString("g")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>

@@ -9,6 +9,9 @@ namespace Rinoleggio.Security;
 [Dependency(ReplaceServices = true)]
 public class FakeCurrentPrincipalAccessor : ThreadCurrentPrincipalAccessor
 {
+    /// <summary>When set, integration tests run app services as this user id.</summary>
+    public static Guid? OverrideUserId { get; set; }
+
     protected override ClaimsPrincipal GetClaimsPrincipal()
     {
         return GetPrincipal();
@@ -16,11 +19,12 @@ public class FakeCurrentPrincipalAccessor : ThreadCurrentPrincipalAccessor
 
     private ClaimsPrincipal GetPrincipal()
     {
+        var userId = (OverrideUserId ?? Guid.Parse("2e701e62-0953-4dd3-910b-dc6cc93ccb0d")).ToString();
         return new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
         {
-            new Claim(AbpClaimTypes.UserId, "2e701e62-0953-4dd3-910b-dc6cc93ccb0d"),
-            new Claim(AbpClaimTypes.UserName, "admin"),
-            new Claim(AbpClaimTypes.Email, "admin@abp.io")
-        }));
+            new Claim(AbpClaimTypes.UserId, userId),
+            new Claim(AbpClaimTypes.UserName, "test-user"),
+            new Claim(AbpClaimTypes.Email, "test@abp.io")
+        }, authenticationType: "Fake"));
     }
 }

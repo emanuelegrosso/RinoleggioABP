@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Rinoleggio.Listings;
 using Rinoleggio.Localization;
 using Rinoleggio.MultiTenancy;
 using System;
@@ -54,6 +55,14 @@ public class RinoleggioDomainModule : AbpModule
                 container.UseFileSystem(fileSystem =>
                 {
                     fileSystem.BasePath = "./BlobStoring";
+                });
+            });
+
+            options.Containers.Configure<ListingImagesBlobContainer>(container =>
+            {
+                container.UseFileSystem(fileSystem =>
+                {
+                    fileSystem.BasePath = "./BlobStoring/listing-images";
                 });
             });
         });

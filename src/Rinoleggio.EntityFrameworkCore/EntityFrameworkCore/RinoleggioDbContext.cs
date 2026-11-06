@@ -2,6 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Rinoleggio.Authors;
 using Rinoleggio.Books;
+using Rinoleggio.Leads;
+using Rinoleggio.Listings;
+using Rinoleggio.Lookups;
+using Rinoleggio.Users;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -28,6 +32,18 @@ public class RinoleggioDbContext :
     public DbSet<Author> Authors { get; set; }
 
     public DbSet<Book> Books { get; set; }
+
+    public DbSet<RentalCompany> RentalCompanies { get; set; }
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<Province> Provinces { get; set; }
+    public DbSet<Listing> Listings { get; set; }
+    public DbSet<ListingContract> ListingContracts { get; set; }
+    public DbSet<ListingVehicle> ListingVehicles { get; set; }
+    public DbSet<ListingServices> ListingServices { get; set; }
+    public DbSet<ListingInsuranceType> ListingInsuranceTypes { get; set; }
+    public DbSet<ListingImage> ListingImages { get; set; }
+    public DbSet<Lead> Leads { get; set; }
+    public DbSet<UserProfile> UserProfiles { get; set; }
 
     #region Entities from the modules
 
@@ -92,6 +108,8 @@ public class RinoleggioDbContext :
             b.Property(x => x.Name).IsRequired().HasMaxLength(128);
             b.HasOne<Author>().WithMany().HasForeignKey(x => x.AuthorId).IsRequired();
         });
+
+        builder.ConfigureRinoleggioListings();
 
         /* Configure your own tables/entities inside here */
 

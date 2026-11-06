@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Rinoleggio.EntityFrameworkCore;
 using Rinoleggio.Localization;
 using Rinoleggio.MultiTenancy;
@@ -30,6 +32,7 @@ using Volo.Abp.PermissionManagement.Web;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.VirtualFileSystem;
 using Volo.Abp.Identity.Web;
 using Volo.Abp.FeatureManagement;
@@ -41,6 +44,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
+using Volo.Abp.AspNetCore.Mvc.UI.Theming;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Identity;
@@ -49,6 +53,7 @@ using Volo.Abp.OpenIddict;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.SettingManagement.Web;
 using Volo.Abp.Studio.Client.AspNetCore;
+using Volo.Abp.Ui.LayoutHooks;
 
 namespace Rinoleggio.Web;
 
@@ -148,6 +153,14 @@ public class RinoleggioWebModule : AbpModule
         ConfigureAuthentication(context);
         ConfigureVirtualFileSystem(hostingEnvironment);
         ConfigureNavigationServices();
+        Configure<AbpLayoutHookOptions>(options =>
+        {
+            options.Add(
+                LayoutHooks.Body.First,
+                typeof(Rinoleggio.Web.Components.LayoutHooks.HtmlShellClassViewComponent),
+                layout: StandardLayouts.Application);
+        });
+        ConfigureLocalization();
         ConfigureAutoApiControllers();
         ConfigureSwaggerServices(context.Services);
 
@@ -245,6 +258,16 @@ public class RinoleggioWebModule : AbpModule
         });
     }
 
+    private void ConfigureLocalization()
+    {
+        Configure<RequestLocalizationOptions>(options =>
+        {
+            options.SetDefaultCulture("it");
+            options.AddSupportedCultures("it", "en", "en-GB", "de-DE", "es");
+            options.AddSupportedUICultures("it", "en", "en-GB", "de-DE", "es");
+        });
+    }
+
     private void ConfigureNavigationServices()
     {
         Configure<AbpNavigationOptions>(options =>
@@ -306,7 +329,7 @@ public class RinoleggioWebModule : AbpModule
         app.UseAuthentication();
         app.UseAbpOpenIddictValidation();
 
-        if (MultiTenancyConsts.IsEnabled)
+        if (context.ServiceProvider.GetRequiredService<IOptions<AbpMultiTenancyOptions>>().Value.IsEnabled)
         {
             app.UseMultiTenancy();
         }
