@@ -7,6 +7,7 @@ ENV PATH="${PATH}:/root/.dotnet/tools"
 RUN apt-get update \
     && apt-get install -y --no-install-recommends nodejs npm \
     && rm -rf /var/lib/apt/lists/*
+RUN npm install --global yarn@1.22.22
 
 COPY . .
 
