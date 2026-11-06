@@ -3,6 +3,10 @@ WORKDIR /src
 ARG OPENIDDICT_CERTIFICATE_PASSPHRASE=5df40b5d-7941-4720-b8b7-12580278f056
 ENV PATH="${PATH}:/root/.dotnet/tools"
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends nodejs npm \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY . .
 
 RUN if [ -d /src/src/Rinoleggio.Web ]; then ln -s /src/src /solution-src; else ln -s /src /solution-src; fi
