@@ -1,5 +1,9 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Rinoleggio.Listings;
 using Rinoleggio.Localization;
 using Rinoleggio.MultiTenancy;
+using System;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
@@ -7,16 +11,15 @@ using Volo.Abp.PermissionManagement.Identity;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.BlobStoring.Database;
 using Volo.Abp.BlobStoring;
+using Volo.Abp.BlobStoring.FileSystem;
 using Volo.Abp.Caching;
 using Volo.Abp.OpenIddict;
 using Volo.Abp.PermissionManagement.OpenIddict;
 using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Emailing;
-using Rinoleggio.Listings;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
-using Volo.Abp.TenantManagement;
 
 namespace Rinoleggio;
 
@@ -32,8 +35,9 @@ namespace Rinoleggio;
     typeof(AbpEmailingModule),
     typeof(AbpIdentityDomainModule),
     typeof(AbpOpenIddictDomainModule),
-    typeof(AbpTenantManagementDomainModule),
-    typeof(BlobStoringDatabaseDomainModule))]
+    typeof(BlobStoringDatabaseDomainModule),
+    typeof(AbpBlobStoringFileSystemModule)
+    )]
 public class RinoleggioDomainModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -43,9 +47,28 @@ public class RinoleggioDomainModule : AbpModule
             options.IsEnabled = MultiTenancyConsts.IsEnabled;
         });
 
+
         Configure<AbpBlobStoringOptions>(options =>
         {
-            options.Containers.Configure<ListingImageContainer>(container => container.UseDatabase());
+            options.Containers.ConfigureDefault(container =>
+            {
+                container.UseFileSystem(fileSystem =>
+                {
+                    fileSystem.BasePath = "./BlobStoring";
+                });
+            });
+
+            options.Containers.Configure<ListingImagesBlobContainer>(container =>
+            {
+                container.UseFileSystem(fileSystem =>
+                {
+                    fileSystem.BasePath = "./BlobStoring/listing-images";
+                });
+            });
         });
+
+#if DEBUG
+        context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
+#endif
     }
 }

@@ -15,7 +15,6 @@ RUN dotnet publish src/Rinoleggio.Web/Rinoleggio.Web.csproj \
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-COPY --from=build /src/Rinoleggio.db /Rinoleggio.db
 
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
