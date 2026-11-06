@@ -1,6 +1,29 @@
-@page
-@{ ViewBag.Title = "Privacy"; }
-<div class="container py-4">
-    <h1 class="h3">Informativa privacy</h1>
-    <p>Testo privacy da completare. I dati di contatto sono visibili solo al backoffice.</p>
+@page "/Privacy"
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@inject IPageLayout PageLayout
+@{
+    PageLayout.Content.Title = "Informativa privacy";
+    PageLayout.Content.ShowToolbar = false;
+}
+
+<h1 class="mb-3">Informativa privacy</h1>
+<div class="alert alert-warning" role="status">
+    <strong>Bozza da completare.</strong> Prima di pubblicare il servizio, il titolare deve inserire i propri dati identificativi e di contatto, le basi giuridiche e i tempi di conservazione definitivi.
 </div>
+
+<section class="mb-4"><h2 class="h4">Dati trattati dal servizio</h2>
+    <p>Rinoleggio tratta i dati dell’account (email, nome, cognome, telefono, tipo di account e preferenze/consensi), i dati inseriti negli annunci (descrizione, immagini, veicolo e condizioni del contratto), le richieste inviate (messaggio, telefono facoltativo e consenso) e i dati necessari a gestirne stato ed esito. I preferiti registrano gli annunci salvati dall’utente.</p>
+</section>
+<section class="mb-4"><h2 class="h4">Come vengono usati e condivisi</h2>
+    <p>I dati servono a gestire account e annunci, ricevere e seguire le richieste e coordinare il subentro. Gli annunci pubblicati mostrano i dati dell’offerta, non i recapiti privati. Il Dealer vede il nome visualizzato e il messaggio relativo alle richieste sui propri annunci. Il Backoffice e gli amministratori autorizzati possono consultare i recapiti necessari per coordinare le parti e le note interne. Le email automatiche comunicano la ricezione o l’aggiornamento delle richieste.</p>
+</section>
+<section class="mb-4"><h2 class="h4">Informazioni da definire dal titolare</h2>
+    <ul>
+        <li>Ragione sociale, sede e contatto ufficiale del titolare del trattamento.</li>
+        <li>Basi giuridiche per ciascuna finalità e natura obbligatoria o facoltativa dei dati.</li>
+        <li>Tempi di conservazione per account, annunci, richieste, log e backup.</li>
+        <li>Fornitori che trattano dati per conto del servizio, inclusi hosting e invio email, ed eventuali trasferimenti fuori dallo SEE.</li>
+        <li>Modalità di contatto per esercitare i diritti dell’interessato e presentare un reclamo.</li>
+    </ul>
+</section>
+<section><h2 class="h4">Contatti</h2><p>Il contatto privacy sarà pubblicato qui quando il titolare avrà fornito l’indirizzo ufficiale.</p></section>

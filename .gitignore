@@ -265,6 +265,8 @@ paket-files/
 *.code-workspace
 
 # Rinoleggio
+**/Rinoleggio.db-wal
+**/Rinoleggio.db-shm
 src/Rinoleggio.Web/Logs/*
 src/Rinoleggio.Web.Host/Logs/*
 src/Rinoleggio.Web.Public/Logs/*

@@ -6,5 +6,5 @@ namespace Rinoleggio.Users;
 public interface IUserProfileAppService : IApplicationService
 {
     Task<UserProfileDto> GetAsync();
-    Task<UserProfileDto> UpdateAsync(UpdateUserProfileDto input);
+    Task UpdateAsync(UpdateUserProfileDto input);
 }

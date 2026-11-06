@@ -1,77 +1,63 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Rinoleggio.Permissions;
+using Rinoleggio.Identity;
 using Volo.Abp;
-using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Timing;
+using Volo.Abp.Application.Services;
+using Volo.Abp.Identity;
+using Volo.Abp.Users;
 
 namespace Rinoleggio.Users;
 
-[Authorize(RinoleggioPermissions.Profile.Default)]
-public class UserProfileAppService : RinoleggioAppService, IUserProfileAppService
+public class UserProfileAppService : ApplicationService, IUserProfileAppService
 {
-    private readonly IRepository<UserProfile, Guid> _userProfileRepository;
-    private readonly IClock _clock;
+    private readonly IdentityUserManager _userManager;
 
-    public UserProfileAppService(
-        IRepository<UserProfile, Guid> userProfileRepository,
-        IClock clock)
-    {
-        _userProfileRepository = userProfileRepository;
-        _clock = clock;
-    }
+    public UserProfileAppService(IdentityUserManager userManager) => _userManager = userManager;
 
     public async Task<UserProfileDto> GetAsync()
     {
-        var profile = await GetOrCreateProfileAsync();
-        return Map(profile);
-    }
-
-    public async Task<UserProfileDto> UpdateAsync(UpdateUserProfileDto input)
-    {
-        if (!input.PrivacyConsent)
-        {
-            throw new BusinessException("Rinoleggio:PrivacyConsentRequired");
-        }
-
-        var profile = await GetOrCreateProfileAsync();
-        profile.FullName = input.FullName;
-        profile.PhoneNumber = input.PhoneNumber;
-        profile.AccountType = input.AccountType;
-        profile.PrivacyConsent = true;
-        profile.PrivacyConsentAt = _clock.Now;
-        await _userProfileRepository.UpdateAsync(profile, autoSave: true);
-        return Map(profile);
-    }
-
-    private async Task<UserProfile> GetOrCreateProfileAsync()
-    {
-        var userId = CurrentUser.Id!.Value;
-        var profile = await _userProfileRepository.FindAsync(userId);
-        if (profile != null)
-        {
-            return profile;
-        }
-
-        profile = new UserProfile(userId)
-        {
-            FullName = CurrentUser.UserName ?? "Utente",
-            AccountType = AccountType.Private,
-            PrivacyConsent = false
-        };
-        await _userProfileRepository.InsertAsync(profile, autoSave: true);
-        return profile;
-    }
-
-    private static UserProfileDto Map(UserProfile profile)
-    {
+        var user = await _userManager.GetByIdAsync(CurrentUser.GetId());
+        var roles = await _userManager.GetRolesAsync(user);
         return new UserProfileDto
         {
-            FullName = profile.FullName,
-            PhoneNumber = profile.PhoneNumber,
-            AccountType = profile.AccountType,
-            PrivacyConsent = profile.PrivacyConsent
+            Name = user.Name ?? string.Empty,
+            Surname = user.Surname ?? string.Empty,
+            PhoneNumber = user.PhoneNumber,
+            AccountType = roles.Contains(RinoleggioRoles.Dealer) ? RinoleggioRoles.Dealer : RinoleggioRoles.Customer,
+            PrivacyConsent = user.ExtraProperties.TryGetValue("PrivacyConsent", out var consent) &&
+                             bool.TryParse(consent?.ToString(), out var accepted) && accepted
         };
+    }
+
+    public async Task UpdateAsync(UpdateUserProfileDto input)
+    {
+        var user = await _userManager.GetByIdAsync(CurrentUser.GetId());
+        var existingRoles = await _userManager.GetRolesAsync(user);
+        if (existingRoles.Contains(RinoleggioRoles.BackOffice) || existingRoles.Contains("Administrator"))
+            throw new BusinessException("Rinoleggio:AccountTypeChangeNotAllowed");
+        if (!existingRoles.Contains(RinoleggioRoles.Customer) && !existingRoles.Contains(RinoleggioRoles.Dealer))
+            throw new BusinessException("Rinoleggio:AccountTypeChangeNotAllowed");
+
+        user.Name = input.Name.Trim();
+        user.Surname = input.Surname.Trim();
+        user.ExtraProperties["PrivacyConsent"] = input.PrivacyConsent.ToString();
+        user.ExtraProperties["PrivacyConsentUpdatedAt"] = Clock.Now.ToUniversalTime().ToString("O");
+        CheckIdentityResult(await _userManager.UpdateAsync(user));
+        CheckIdentityResult(await _userManager.SetPhoneNumberAsync(user, input.PhoneNumber?.Trim()));
+
+        var currentAccountRole = existingRoles.Contains(RinoleggioRoles.Dealer) ? RinoleggioRoles.Dealer : RinoleggioRoles.Customer;
+        if (!string.Equals(currentAccountRole, input.AccountType, StringComparison.Ordinal))
+        {
+            CheckIdentityResult(await _userManager.RemoveFromRoleAsync(user, currentAccountRole));
+            CheckIdentityResult(await _userManager.AddToRoleAsync(user, input.AccountType));
+        }
+    }
+
+    private static void CheckIdentityResult(Microsoft.AspNetCore.Identity.IdentityResult result)
+    {
+        if (!result.Succeeded)
+            throw new BusinessException("Rinoleggio:ProfileUpdateFailed")
+                .WithData("Errors", string.Join("; ", result.Errors.Select(x => x.Description)));
     }
 }

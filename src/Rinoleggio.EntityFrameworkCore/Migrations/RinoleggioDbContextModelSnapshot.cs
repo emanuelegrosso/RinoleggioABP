@@ -141,68 +141,10 @@ namespace Rinoleggio.Migrations
                     b.ToTable("AppBooks", (string)null);
                 });
 
-            modelBuilder.Entity("Rinoleggio.Leads.Lead", b =>
+            modelBuilder.Entity("Rinoleggio.Listings.CatalogEntry", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("TEXT");
-
-                    b.Property<string>("BackofficeNotes")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("BuyerId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(30)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("PrivacyConsent")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("SellerId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ListingId");
-
-                    b.HasIndex("SellerId");
-
-                    b.HasIndex("BuyerId", "ListingId");
-
-                    b.ToTable("AppLeads", (string)null);
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.Listing", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("BusinessStatus")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -219,15 +161,207 @@ namespace Rinoleggio.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("CreatorId");
 
-                    b.Property<Guid?>("DeleterId")
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasColumnName("DeleterId");
+                        .HasColumnName("ExtraProperties");
 
-                    b.Property<DateTime?>("DeletionTime")
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("TEXT")
-                        .HasColumnName("DeletionTime");
+                        .HasColumnName("LastModificationTime");
 
-                    b.Property<string>("DescriptionHtml")
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Type", "IsActive");
+
+                    b.HasIndex("Type", "NormalizedName")
+                        .IsUnique();
+
+                    b.ToTable("AppCatalogEntries", (string)null);
+                });
+
+            modelBuilder.Entity("Rinoleggio.Listings.Favorite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "ListingId")
+                        .IsUnique();
+
+                    b.ToTable("AppFavorites", (string)null);
+                });
+
+            modelBuilder.Entity("Rinoleggio.Listings.Lead", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("BuyerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BuyerPhone")
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("InternalNotes")
+                        .HasMaxLength(4000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Outcome")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("OutcomeNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("PrivacyConsent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SellerId", "CreationTime");
+
+                    b.HasIndex("ListingId", "BuyerId", "Status");
+
+                    b.ToTable("AppLeads", (string)null);
+                });
+
+            modelBuilder.Entity("Rinoleggio.Listings.Listing", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<decimal>("ContributionAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ContributionType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<int>("CurrentKm")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("ExcessKmRate")
+                        .HasPrecision(18, 3)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ExtraProperties")
@@ -235,11 +369,23 @@ namespace Rinoleggio.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("ExtraProperties");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(false)
-                        .HasColumnName("IsDeleted");
+                    b.Property<int>("FuelType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ImageUrls")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("InitialPayment")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("InsuranceIncluded")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("InsuranceKinds")
+                        .HasMaxLength(300)
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsPublished")
                         .HasColumnType("INTEGER");
@@ -252,158 +398,36 @@ namespace Rinoleggio.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("LastModifierId");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("MaintenanceIncluded")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("ProvinceId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("PublishedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SlugPath")
+                    b.Property<string>("Model")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("StatusChangedBy")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("StatusReason")
-                        .HasMaxLength(1000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("TransferContributionAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("TransferContributionType")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnerId");
-
-                    b.HasIndex("ProvinceId");
-
-                    b.HasIndex("SlugPath")
-                        .IsUnique();
-
-                    b.HasIndex("IsPublished", "BusinessStatus", "ProvinceId");
-
-                    b.ToTable("AppListings", (string)null);
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingContract", b =>
-                {
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("CurrentKm")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateOnly>("EndDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal?>("ExcessKmRate")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("InitialPayment")
-                        .HasPrecision(18, 2)
+                        .HasMaxLength(80)
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("MonthlyFee")
                         .HasPrecision(18, 2)
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RegistrationYear")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("RemainingKm")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("RentalCompanyId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateOnly?>("StartDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("TotalKm")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal?>("UnderKmRate")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("VatIncluded")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ListingId");
-
-                    b.HasIndex("EndDate");
-
-                    b.HasIndex("RentalCompanyId");
-
-                    b.ToTable("AppListingContracts", (string)null);
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte>("SortOrder")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("StoragePathOrBlobId")
+                    b.Property<string>("RentalCompany")
                         .IsRequired()
-                        .HasMaxLength(500)
+                        .HasMaxLength(120)
                         .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ListingId");
-
-                    b.ToTable("AppListingImages", (string)null);
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingInsuranceType", b =>
-                {
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("InsuranceKind")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ListingId", "InsuranceKind");
-
-                    b.ToTable("AppListingInsuranceTypes", (string)null);
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingServices", b =>
-                {
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("InsuranceIncluded")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("MaintenanceIncluded")
-                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("ReplacementCarIncluded")
                         .HasColumnType("INTEGER");
@@ -414,173 +438,59 @@ namespace Rinoleggio.Migrations
                     b.Property<bool>("RoadsideAssistanceIncluded")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("StatusBeforeDeletion")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("StatusChangedByBackOffice")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("StatusChangedByBackOfficeBeforeDeletion")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StatusReason")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("TiresIncluded")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ListingId");
-
-                    b.ToTable("AppListingServices", (string)null);
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingVehicle", b =>
-                {
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("BrandId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("FuelType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Model")
+                    b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(80)
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
-                    b.Property<short>("RegistrationYear")
+                    b.Property<int>("TotalKm")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Transmission")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal?>("UnderKmRate")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("VatIncluded")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Version")
                         .HasMaxLength(120)
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ListingId");
-
-                    b.HasIndex("BrandId");
-
-                    b.ToTable("AppListingVehicles", (string)null);
-                });
-
-            modelBuilder.Entity("Rinoleggio.Lookups.Brand", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("SortOrder")
+                    b.Property<bool?>("WasPublishedBeforeDeletion")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.ToTable("AppBrands", (string)null);
-                });
+                    b.HasIndex("OwnerId");
 
-            modelBuilder.Entity("Rinoleggio.Lookups.Province", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
+                    b.HasIndex("IsPublished", "Status", "EndDate");
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("SortOrder")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.ToTable("AppProvinces", (string)null);
-                });
-
-            modelBuilder.Entity("Rinoleggio.Lookups.RentalCompany", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("WebsiteUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("AppRentalCompanies", (string)null);
-                });
-
-            modelBuilder.Entity("Rinoleggio.Users.UserProfile", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("AccountType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(30)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("PrivacyConsent")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("PrivacyConsentAt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("AppUserProfiles", (string)null);
+                    b.ToTable("AppListings", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
@@ -2454,6 +2364,94 @@ namespace Rinoleggio.Migrations
                     b.ToTable("AbpSettingDefinitions", (string)null);
                 });
 
+            modelBuilder.Entity("Volo.Abp.TenantManagement.Tenant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<int>("EntityVersion")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("NormalizedName");
+
+                    b.ToTable("AbpTenants", (string)null);
+                });
+
+            modelBuilder.Entity("Volo.Abp.TenantManagement.TenantConnectionString", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TenantId", "Name");
+
+                    b.ToTable("AbpTenantConnectionStrings", (string)null);
+                });
+
             modelBuilder.Entity("Rinoleggio.Books.Book", b =>
                 {
                     b.HasOne("Rinoleggio.Authors.Author", null)
@@ -2461,89 +2459,6 @@ namespace Rinoleggio.Migrations
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Rinoleggio.Leads.Lead", b =>
-                {
-                    b.HasOne("Rinoleggio.Listings.Listing", "Listing")
-                        .WithMany()
-                        .HasForeignKey("ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Listing");
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.Listing", b =>
-                {
-                    b.HasOne("Rinoleggio.Lookups.Province", "Province")
-                        .WithMany()
-                        .HasForeignKey("ProvinceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Province");
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingContract", b =>
-                {
-                    b.HasOne("Rinoleggio.Listings.Listing", null)
-                        .WithOne("Contract")
-                        .HasForeignKey("Rinoleggio.Listings.ListingContract", "ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Rinoleggio.Lookups.RentalCompany", "RentalCompany")
-                        .WithMany()
-                        .HasForeignKey("RentalCompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RentalCompany");
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingImage", b =>
-                {
-                    b.HasOne("Rinoleggio.Listings.Listing", null)
-                        .WithMany("Images")
-                        .HasForeignKey("ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingInsuranceType", b =>
-                {
-                    b.HasOne("Rinoleggio.Listings.ListingServices", null)
-                        .WithMany("InsuranceTypes")
-                        .HasForeignKey("ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingServices", b =>
-                {
-                    b.HasOne("Rinoleggio.Listings.Listing", null)
-                        .WithOne("Services")
-                        .HasForeignKey("Rinoleggio.Listings.ListingServices", "ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingVehicle", b =>
-                {
-                    b.HasOne("Rinoleggio.Lookups.Brand", "Brand")
-                        .WithMany()
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Rinoleggio.Listings.Listing", null)
-                        .WithOne("Vehicle")
-                        .HasForeignKey("Rinoleggio.Listings.ListingVehicle", "ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Brand");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
@@ -2744,23 +2659,13 @@ namespace Rinoleggio.Migrations
                         .HasForeignKey("AuthorizationId");
                 });
 
-            modelBuilder.Entity("Rinoleggio.Listings.Listing", b =>
+            modelBuilder.Entity("Volo.Abp.TenantManagement.TenantConnectionString", b =>
                 {
-                    b.Navigation("Contract")
+                    b.HasOne("Volo.Abp.TenantManagement.Tenant", null)
+                        .WithMany("ConnectionStrings")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Images");
-
-                    b.Navigation("Services")
-                        .IsRequired();
-
-                    b.Navigation("Vehicle")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Rinoleggio.Listings.ListingServices", b =>
-                {
-                    b.Navigation("InsuranceTypes");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
@@ -2800,6 +2705,11 @@ namespace Rinoleggio.Migrations
             modelBuilder.Entity("Volo.Abp.Identity.OrganizationUnit", b =>
                 {
                     b.Navigation("Roles");
+                });
+
+            modelBuilder.Entity("Volo.Abp.TenantManagement.Tenant", b =>
+                {
+                    b.Navigation("ConnectionStrings");
                 });
 #pragma warning restore 612, 618
         }

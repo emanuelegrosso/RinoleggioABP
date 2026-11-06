@@ -1,57 +1,22 @@
-﻿@page
+@page
 @model Rinoleggio.Web.Pages.IndexModel
-@using Rinoleggio.Web.Menus
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
-@using Microsoft.AspNetCore.Mvc.Localization
-@using Rinoleggio.Localization
-@using Volo.Abp.Users
+@using Rinoleggio.Web.Menus
 @inject IPageLayout PageLayout
-@inject IHtmlLocalizer<RinoleggioResource> L
-@inject ICurrentUser CurrentUser
 @{
-    PageLayout.Content.Title = L["Menu:Home"].Value;
+    PageLayout.Content.Title = "Rinoleggio";
     PageLayout.Content.BreadCrumb.ShowCurrent = false;
     PageLayout.Content.ShowToolbar = false;
     PageLayout.Content.MenuItemName = RinoleggioMenus.Home;
 }
-
-@section styles {
-    <abp-style src="/Pages/Index.css" />
-}
-
-<div class="container py-5 home-hero">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-            <h1 class="display-5 fw-bold mb-3">@L["Home:HeroTitle"]</h1>
-            <p class="lead text-muted mb-4">@L["Home:HeroSubtitle"]</p>
-            <div class="d-flex flex-wrap gap-2 justify-content-center mb-4">
-                <a href="~/Contracts" class="btn btn-primary btn-lg">@L["Home:CtaSearch"]</a>
-                @if (!CurrentUser.IsAuthenticated)
-                {
-                    <a href="~/Account/Register" class="btn btn-outline-primary btn-lg">@L["Home:CtaRegister"]</a>
-                    <a href="~/Account/Login" class="btn btn-outline-secondary btn-lg">@L["Home:CtaLogin"]</a>
-                }
-                else
-                {
-                    @if (Model.CanViewOwnListings)
-                    {
-                        <a href="~/Contracts/Mine" class="btn btn-outline-primary btn-lg">@L["Home:CtaMyListings"]</a>
-                    }
-                    @if (Model.CanCreateListing)
-                    {
-                        <a href="~/Contracts/Create" class="btn btn-outline-primary btn-lg">@L["Home:CtaPublish"]</a>
-                    }
-                }
-            </div>
-            <div class="row g-3 text-start mt-4">
-                <div class="col-md-4"><div class="card h-100 border-0 bg-light"><div class="card-body"><strong>1. Cerca</strong><p class="small text-muted mb-0">Filtra i contratti di noleggio disponibili al subentro.</p></div></div></div>
-                <div class="col-md-4"><div class="card h-100 border-0 bg-light"><div class="card-body"><strong>2. Richiedi</strong><p class="small text-muted mb-0">Invia una richiesta: il backoffice coordina le parti.</p></div></div></div>
-                <div class="col-md-4"><div class="card h-100 border-0 bg-light"><div class="card-body"><strong>3. Concludi</strong><p class="small text-muted mb-0">Subentro fuori piattaforma con le società di noleggio.</p></div></div></div>
-            </div>
-            @if (!CurrentUser.IsAuthenticated)
-            {
-                <p class="text-muted small mb-0 mt-3">@L["Home:GuestHint"]</p>
-            }
-        </div>
-    </div>
+<section class="py-5 text-center">
+    <h1 class="display-4 fw-bold">Subentra in un noleggio a lungo termine</h1>
+    <p class="lead mx-auto" style="max-width: 720px">Trova contratti NLT già avviati, confronta costi e condizioni e invia una richiesta al nostro team.</p>
+    <a class="btn btn-primary btn-lg mt-3" href="/Listings">Vai alla ricerca</a>
+    <a class="btn btn-outline-secondary btn-lg mt-3 ms-2" href="/ComeFunziona">Come funziona</a>
+</section>
+<div class="row g-3 mb-5">
+    <div class="col-md-4"><div class="card h-100"><div class="card-body"><h2 class="h5">1. Cerca</h2><p>Filtra per veicolo, canone, chilometraggio e scadenza.</p></div></div></div>
+    <div class="col-md-4"><div class="card h-100"><div class="card-body"><h2 class="h5">2. Invia una richiesta</h2><p>Contattaci dall’annuncio che ti interessa.</p></div></div></div>
+    <div class="col-md-4"><div class="card h-100"><div class="card-body"><h2 class="h5">3. Ti seguiamo</h2><p>Il team coordina i prossimi passi con le parti coinvolte.</p></div></div></div>
 </div>
