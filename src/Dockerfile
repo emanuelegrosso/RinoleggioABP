@@ -2,12 +2,23 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 ARG OPENIDDICT_CERTIFICATE_PASSPHRASE=5df40b5d-7941-4720-b8b7-12580278f056
 
-# Fly build context must be the repository root (RinoleggioABP).
+# Fly build context is the repository's src directory.
 COPY . .
 
-RUN dotnet dev-certs https -v -ep src/Rinoleggio.Web/openiddict.pfx -p "$OPENIDDICT_CERTIFICATE_PASSPHRASE"
+RUN printf '%s\n' \
+    '<Project>' \
+    '  <PropertyGroup>' \
+    '    <LangVersion>latest</LangVersion>' \
+    '    <Version>1.0.0</Version>' \
+    '    <NoWarn>$(NoWarn);CS1591</NoWarn>' \
+    '    <NuGetAudit>false</NuGetAudit>' \
+    '    <AbpProjectType>app</AbpProjectType>' \
+    '  </PropertyGroup>' \
+    '</Project>' > /common.props
 
-RUN dotnet publish src/Rinoleggio.Web/Rinoleggio.Web.csproj \
+RUN dotnet dev-certs https -v -ep Rinoleggio.Web/openiddict.pfx -p "$OPENIDDICT_CERTIFICATE_PASSPHRASE"
+
+RUN dotnet publish Rinoleggio.Web/Rinoleggio.Web.csproj \
     --configuration Release \
     --output /app/publish \
     /p:UseAppHost=false
