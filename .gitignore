@@ -280,6 +280,8 @@ src/Rinoleggio.Blazor.Server.Tiered/Logs/*
 
 # Use abp install-libs to restore.
 **/wwwroot/libs/*
+!src/Rinoleggio.Web/wwwroot/libs/
+!src/Rinoleggio.Web/wwwroot/libs/**
 
 # IdentityServer temp files
 tempkey.rsa
