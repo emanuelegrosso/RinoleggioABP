@@ -6,4 +6,4 @@
 **/.temp-build
 **/Logs
 **/appsettings.secrets.json
-Rinoleggio.db*
+Rinoleggio.db-*
