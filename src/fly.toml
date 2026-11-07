@@ -1,8 +1,9 @@
 app = "rinoleggioabp"
 primary_region = "ams"
 
+# Build context is this directory (src/), also for the GitHub-triggered Fly builds.
 [build]
-  dockerfile = "src/Dockerfile"
+  dockerfile = "Dockerfile"
 
 [mounts]
   source = "data"
