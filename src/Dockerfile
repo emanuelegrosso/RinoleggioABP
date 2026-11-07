@@ -7,7 +7,19 @@ ARG OPENIDDICT_CERTIFICATE_PASSPHRASE=8a337503-69aa-4e90-8e92-c5791cfc352b
 # Build context must be the repository root (ABP/Codex/Rinoleggio).
 COPY . .
 
-RUN dotnet dev-certs https -v -ep src/Rinoleggio.Web/openiddict.pfx -p "$OPENIDDICT_CERTIFICATE_PASSPHRASE"
+# Generate the OpenIddict encryption/signing certificate.
+# `dotnet dev-certs` can fail in some remote builders (exit code 3 = export error), so fall back to openssl.
+RUN mkdir -p src/Rinoleggio.Web \
+    && ( dotnet dev-certs https -ep src/Rinoleggio.Web/openiddict.pfx -p "$OPENIDDICT_CERTIFICATE_PASSPHRASE" \
+      || ( echo "dev-certs failed, falling back to openssl" \
+        && openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 3650 \
+             -subj "/CN=localhost" \
+             -addext "keyUsage=digitalSignature,keyEncipherment" \
+             -keyout /tmp/openiddict.key -out /tmp/openiddict.crt \
+        && openssl pkcs12 -export -out src/Rinoleggio.Web/openiddict.pfx \
+             -inkey /tmp/openiddict.key -in /tmp/openiddict.crt \
+             -passout "pass:$OPENIDDICT_CERTIFICATE_PASSPHRASE" ) ) \
+    && test -s src/Rinoleggio.Web/openiddict.pfx
 
 RUN dotnet publish src/Rinoleggio.Web/Rinoleggio.Web.csproj \
     --configuration Release \

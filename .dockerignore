@@ -7,3 +7,4 @@
 **/Logs
 **/appsettings.secrets.json
 Rinoleggio.db-*
+**/*.pfx
