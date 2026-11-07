@@ -1,0 +1,45 @@
+@page "/Dealer/Leads"
+@model Rinoleggio.Web.Pages.Dealer.Leads.IndexModel
+
+<h1 class="mb-3">Richieste ricevute</h1>
+<p class="text-muted">Messaggi dei clienti interessati ai tuoi annunci. I recapiti privati sono gestiti dal BackOffice.</p>
+
+@if (Model.Requests.TotalCount == 0)
+{
+    <div class="alert alert-info">Non hai ancora ricevuto richieste.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead><tr><th>Annuncio</th><th>Cliente</th><th>Messaggio</th><th>Stato</th><th>Data</th></tr></thead>
+            <tbody>
+            @foreach (var request in Model.Requests.Items)
+            {
+                <tr>
+                    <td>
+                        @if (request.CurrentListingStatus == ListingStatus.Deleted)
+                        {
+                            <span>@request.ListingTitle</span><div class="small text-muted">Annuncio eliminato</div>
+                        }
+                        else if (request.CurrentListingStatus.HasValue)
+                        {
+                            <a href="/My/Listings/Edit/@request.ListingId">@request.ListingTitle</a><div class="small text-muted">Offerta: @request.CurrentListingStatus</div>
+                        }
+                        else { <span>@request.ListingTitle</span> }
+                    </td>
+                    <td>@request.CustomerDisplayName</td>
+                    <td>@request.Message</td>
+                    <td>@request.Status</td>
+                    <td>@request.CreationTime.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <nav class="mt-4 d-flex justify-content-between" aria-label="Paginazione richieste">
+        <a class="btn btn-outline-secondary @(Model.SkipCount == 0 ? "disabled" : "")" aria-disabled="@(Model.SkipCount == 0)" href="?skipCount=@Model.PreviousSkipCount">Precedente</a>
+        <span class="align-self-center">Pagina @Model.PageNumber di @Model.PageCount</span>
+        <a class="btn btn-outline-secondary @(!Model.HasNextPage ? "disabled" : "")" aria-disabled="@(!Model.HasNextPage)" href="?skipCount=@Model.NextSkipCount">Successiva</a>
+    </nav>
+}

@@ -1,0 +1,29 @@
+@page "/Admin/Catalogs"
+@using Rinoleggio.Listings
+@model Rinoleggio.Web.Pages.Admin.Catalogs.IndexModel
+
+<h1 class="mb-3">Anagrafiche</h1>
+<p class="text-muted">Gestisci le società di noleggio, le marche e le province suggerite durante l’inserimento degli annunci.</p>
+@if (TempData["CatalogError"] is string error) { <div class="alert alert-warning">@error</div> }
+
+<form method="get" class="mb-3 d-flex gap-2 align-items-end" style="max-width:520px"><input type="hidden" name="SkipCount" value="0" /><div class="flex-grow-1"><label class="form-label">Categoria</label><select name="Type" class="form-select"><option value="">Tutte</option>@foreach (CatalogEntryType type in Enum.GetValues(typeof(CatalogEntryType))) { <option value="@type" selected="@(Model.Type == type)">@type</option> }</select></div><button class="btn btn-outline-primary">Filtra</button></form>
+
+<form method="post" asp-page-handler="Create" class="card card-body mb-4" style="max-width:720px"><h2 class="h5">Aggiungi voce</h2><div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row g-2"><div class="col-md-4"><label asp-for="Input.Type" class="form-label">Categoria</label><select asp-for="Input.Type" asp-items="Html.GetEnumSelectList<CatalogEntryType>()" class="form-select"></select></div><div class="col-md-6"><label asp-for="Input.Name" class="form-label">Nome</label><input asp-for="Input.Name" class="form-control" /><span asp-validation-for="Input.Name" class="text-danger"></span></div><div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Aggiungi</button></div></div>
+</form>
+
+<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Categoria</th><th>Voce</th><th>Stato</th><th>Azioni</th></tr></thead><tbody>
+@foreach (var entry in Model.Entries.Items)
+{
+    <tr><td>@entry.Type</td><td><form method="post" asp-page-handler="Rename" class="d-flex gap-2"><input type="hidden" name="id" value="@entry.Id" /><input type="hidden" name="Type" value="@Model.Type" /><input type="hidden" name="SkipCount" value="@Model.SkipCount" /><input name="name" value="@entry.Name" maxlength="120" required class="form-control form-control-sm" /><button class="btn btn-sm btn-outline-primary">Rinomina</button></form></td><td>@(entry.IsActive ? "Attiva" : "Disattivata")</td><td class="d-flex gap-2">
+        <form method="post" asp-page-handler="SetActive"><input type="hidden" name="id" value="@entry.Id" /><input type="hidden" name="isActive" value="@(!entry.IsActive)" /><input type="hidden" name="Type" value="@Model.Type" /><input type="hidden" name="SkipCount" value="@Model.SkipCount" /><button class="btn btn-sm btn-outline-secondary">@(entry.IsActive ? "Disattiva" : "Attiva")</button></form>
+        <form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@entry.Id" /><input type="hidden" name="Type" value="@Model.Type" /><input type="hidden" name="SkipCount" value="@Model.SkipCount" /><button class="btn btn-sm btn-outline-danger">Elimina</button></form>
+    </td></tr>
+}
+</tbody></table></div>
+<p class="text-muted">@(Model.Entries.TotalCount) voci · pagina @Model.PageNumber di @Model.PageCount</p>
+<nav class="mb-4 d-flex justify-content-between" aria-label="Paginazione anagrafiche">
+    <a class="btn btn-outline-secondary @(Model.SkipCount == 0 ? "disabled" : "")" aria-disabled="@(Model.SkipCount == 0)" href="?skipCount=@Model.PreviousSkipCount&amp;type=@Model.Type">Precedente</a>
+    <span class="align-self-center">Pagina @Model.PageNumber di @Model.PageCount</span>
+    <a class="btn btn-outline-secondary @(!Model.HasNextPage ? "disabled" : "")" aria-disabled="@(!Model.HasNextPage)" href="?skipCount=@Model.NextSkipCount&amp;type=@Model.Type">Successiva</a>
+</nav>

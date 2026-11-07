@@ -1,0 +1,48 @@
+@page "/Listings"
+@using Rinoleggio.Listings
+@model Rinoleggio.Web.Pages.Listings.IndexModel
+<div class="d-flex justify-content-between align-items-center mb-3"><div><h1>Contratti disponibili</h1><p class="text-muted">@Model.Results.TotalCount risultati</p></div>@if (Model.CanCreateListing) { <a class="btn btn-primary" href="/My/Listings/Create">Pubblica un’offerta</a> }</div>
+<form method="get" class="card card-body mb-4">
+    <input type="hidden" name="Filter.SkipCount" value="0" />
+    <input type="hidden" name="Filter.MaxResultCount" value="@Model.Filter.MaxResultCount" />
+    <div class="row g-2 align-items-end">
+        <div class="col-md-5"><label class="form-label" for="search-query">Cerca</label><input id="search-query" class="form-control" name="Filter.Query" value="@Model.Filter.Query" placeholder="Marca, modello o parola chiave" /></div>
+        <div class="col-md-3"><label class="form-label" for="search-province">Provincia</label><input id="search-province" class="form-control" list="province-options" name="Filter.Province" value="@Model.Filter.Province" /><datalist id="province-options">@foreach (var value in Model.Provinces) { <option value="@value"></option> }</datalist></div>
+        <div class="col-md-2"><label class="form-label" for="search-price">Canone max (€)</label><input id="search-price" class="form-control" type="number" min="0" step="0.01" name="Filter.MonthlyFeeTo" value="@Model.Filter.MonthlyFeeTo" /></div>
+        <div class="col-md-2 d-flex gap-2"><button class="btn btn-primary flex-grow-1">Cerca</button><a class="btn btn-outline-secondary" href="/Listings" aria-label="Azzera filtri">×</a></div>
+    </div>
+    <details class="mt-3">
+        <summary class="text-primary">Altri filtri e ordinamento</summary>
+        <div class="row g-2 mt-1">
+            <div class="col-md-3"><label class="form-label">Società di noleggio</label><input class="form-control" list="rental-company-options" name="Filter.RentalCompany" value="@Model.Filter.RentalCompany" /><datalist id="rental-company-options">@foreach (var value in Model.RentalCompanies) { <option value="@value"></option> }</datalist></div>
+            <div class="col-md-3"><label class="form-label">Marca</label><input class="form-control" list="brand-options" name="Filter.Brand" value="@Model.Filter.Brand" /><datalist id="brand-options">@foreach (var value in Model.Brands) { <option value="@value"></option> }</datalist></div>
+            <div class="col-md-3"><label class="form-label">Modello</label><input class="form-control" name="Filter.Model" value="@Model.Filter.Model" /></div>
+            <div class="col-md-3"><label class="form-label">Alimentazione</label><select name="Filter.FuelType" class="form-select"><option value="">Tutte</option>@foreach (FuelType value in Enum.GetValues(typeof(FuelType))) { <option value="@value" selected="@(Model.Filter.FuelType == value)">@value</option> }</select></div>
+            <div class="col-md-3"><label class="form-label">Cambio</label><select name="Filter.Transmission" class="form-select"><option value="">Tutti</option>@foreach (TransmissionType value in Enum.GetValues(typeof(TransmissionType))) { <option value="@value" selected="@(Model.Filter.Transmission == value)">@value</option> }</select></div>
+            <div class="col-md-3"><label class="form-label">Anno da / a</label><div class="input-group"><input class="form-control" type="number" min="1900" max="2100" name="Filter.YearFrom" value="@Model.Filter.YearFrom" placeholder="Da" /><input class="form-control" type="number" min="1900" max="2100" name="Filter.YearTo" value="@Model.Filter.YearTo" placeholder="A" /></div></div>
+            <div class="col-md-3"><label class="form-label">Canone mensile (€) da / a</label><div class="input-group"><input class="form-control" type="number" min="0" step="0.01" name="Filter.MonthlyFeeFrom" value="@Model.Filter.MonthlyFeeFrom" placeholder="Da" /><input class="form-control" type="number" min="0" step="0.01" name="Filter.MonthlyFeeTo" value="@Model.Filter.MonthlyFeeTo" placeholder="A" /></div></div>
+            <div class="col-md-3"><label class="form-label">Km residui da / a</label><div class="input-group"><input class="form-control" type="number" min="0" name="Filter.RemainingKmFrom" value="@Model.Filter.RemainingKmFrom" placeholder="Da" /><input class="form-control" type="number" min="0" name="Filter.RemainingKmTo" value="@Model.Filter.RemainingKmTo" placeholder="A" /></div></div>
+            <div class="col-md-3"><label class="form-label">Fine contratto da</label><input class="form-control" type="date" name="Filter.EndDateFrom" value="@(Model.Filter.EndDateFrom?.ToString("yyyy-MM-dd"))" /></div>
+            <div class="col-md-3"><label class="form-label">Fine contratto a</label><input class="form-control" type="date" name="Filter.EndDateTo" value="@(Model.Filter.EndDateTo?.ToString("yyyy-MM-dd"))" /></div>
+            <div class="col-md-3"><label class="form-label">IVA</label><select name="Filter.VatIncluded" class="form-select"><option value="">Indifferente</option><option value="true" selected="@(Model.Filter.VatIncluded == true)">Inclusa</option><option value="false" selected="@(Model.Filter.VatIncluded == false)">Esclusa</option></select></div>
+            <div class="col-md-3"><label class="form-label">Contributo</label><select name="Filter.ContributionType" class="form-select"><option value="">Tutti</option>@foreach (ContributionType value in Enum.GetValues(typeof(ContributionType))) { <option value="@value" selected="@(Model.Filter.ContributionType == value)">@value</option> }</select></div>
+            <div class="col-md-6"><label class="form-label">Ordina per</label><select name="Filter.Sorting" class="form-select"><option value="">Scadenza e canone</option><option value="monthlyfee asc" selected="@(Model.Filter.Sorting == "monthlyfee asc")">Canone crescente</option><option value="monthlyfee desc" selected="@(Model.Filter.Sorting == "monthlyfee desc")">Canone decrescente</option><option value="enddate desc" selected="@(Model.Filter.Sorting == "enddate desc")">Scadenza più lontana</option></select></div>
+            <div class="col-12 d-flex justify-content-end"><button class="btn btn-primary">Applica filtri</button></div>
+        </div>
+    </details>
+</form>
+<div class="row g-3">
+@foreach (var item in Model.Results.Items)
+{
+    <div class="col-md-6 col-xl-4"><article class="card h-100">
+        @if (!string.IsNullOrWhiteSpace(item.ImageUrls)) { <img src="@item.ImageUrls.Split(';')[0]" class="card-img-top" style="height:210px;object-fit:cover" alt="@item.Title" /> }
+        <div class="card-body"><div class="d-flex justify-content-between"><span class="badge text-bg-secondary">@item.Province</span>@if (item.Status == ListingStatus.Reserved) { <span class="badge text-bg-warning">Riservato</span> }</div>
+            <h2 class="h5 mt-2">@item.Title</h2><p class="text-muted mb-2">@item.Brand @item.Model @item.Version · @item.RegistrationYear</p>
+            <p class="h4">@item.MonthlyFee.ToString("C0") <small class="fs-6 text-muted">/ mese</small></p>
+            <p class="small mb-3">@item.RentalCompany · scade @item.EndDate.ToString("dd/MM/yyyy") · @item.RemainingKm.ToString("N0") km residui</p>
+            <a class="btn btn-outline-primary" href="/Listings/Details/@item.Id">Dettagli</a>
+            @if (Model.CanManageFavorites) { <form method="post" asp-page-handler="AddFavorite" class="d-inline"><input type="hidden" name="listingId" value="@item.Id" /><button class="btn btn-outline-danger" type="submit" aria-label="Aggiungi @item.Title ai preferiti"><i class="fa fa-heart"></i> Preferito</button></form> }
+        </div></article></div>
+}
+</div>
+<nav class="mt-4 d-flex gap-2"><a class="btn btn-outline-secondary @(Model.Filter.SkipCount == 0 ? "disabled" : "")" href="@Model.GetPageUrl(Math.Max(0, Model.Filter.SkipCount - Model.Filter.MaxResultCount))">Precedente</a><a class="btn btn-outline-secondary @(Model.Filter.SkipCount + Model.Filter.MaxResultCount >= Model.Results.TotalCount ? "disabled" : "")" href="@Model.GetPageUrl(Model.Filter.SkipCount + Model.Filter.MaxResultCount)">Successiva</a></nav>

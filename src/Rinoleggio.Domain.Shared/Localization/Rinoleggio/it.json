@@ -37,6 +37,20 @@
     "Unspecified": "Sistema",
     "SeeAllUsers": "Visualizza tutti gli utenti",
     "TakePhoto": "Fare foto",
-    "ChoosePhoto": "Scegli la foto"
+    "ChoosePhoto": "Scegli la foto",
+    "Permission:Customer.Leads": "Richieste cliente",
+    "Permission:Administrator": "Amministrazione Rinoleggio",
+    "Permission:Administrator.ManageCatalogs": "Gestisci anagrafiche",
+    "Permission:Administrator.RestoreListings": "Ripristina annunci eliminati",
+    "Permission:Customer.Favorites": "Preferiti cliente",
+    "Permission:Customer.Favorites.Manage": "Gestisci i propri preferiti",
+    "Permission:Customer.Leads.Create": "Invia richieste di contatto",
+    "Permission:Customer.Leads.ViewOwn": "Visualizza le proprie richieste",
+    "Permission:Dealer.Listings": "Annunci dealer",
+    "Permission:Dealer.Listings.Create": "Crea annunci",
+    "Permission:Dealer.Listings.ViewOwn": "Visualizza i propri annunci",
+    "Permission:Dealer.Listings.ManageOwn": "Gestisci i propri annunci",
+    "Permission:Dealer.Leads": "Richieste ricevute dal dealer",
+    "Permission:Dealer.Leads.ViewReceived": "Visualizza le richieste ricevute"
   }
 }

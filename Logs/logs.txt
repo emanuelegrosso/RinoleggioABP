@@ -1,0 +1,33 @@
+2026-11-05 22:19:00.949 +01:00 [INF] Started database migrations...
+2026-11-05 22:19:00.959 +01:00 [INF] Migrating schema for host database...
+2026-11-05 22:19:02.590 +01:00 [INF] Executing host database seed...
+2026-11-05 22:19:03.204 +01:00 [ERR] Failed executing DbCommand (3ms) [Parameters=[@names1='?' (Size = 36), @names2='?' (Size = 26), @names3='?' (Size = 31), @names4='?' (Size = 26), @names5='?' (Size = 17), @names6='?' (Size = 24), @names7='?' (Size = 24), @names8='?' (Size = 24), @names9='?' (Size = 35), @names10='?' (Size = 17), @names11='?' (Size = 24), @names12='?' (Size = 24), @names13='?' (Size = 36), @names14='?' (Size = 24), @names15='?' (Size = 35), @names16='?' (Size = 27), @names17='?' (Size = 34), @names18='?' (Size = 34), @names19='?' (Size = 34), @names20='?' (Size = 42), @names21='?' (Size = 51), @names22='?' (Size = 16), @names23='?' (Size = 23), @names24='?' (Size = 21), @names25='?' (Size = 23), @names26='?' (Size = 18), @names27='?' (Size = 25), @names28='?' (Size = 23), @names29='?' (Size = 25), @names30='?' (Size = 25), @names31='?' (Size = 32), @names32='?' (Size = 33), @names33='?' (Size = 29), @names34='?' (Size = 36), @names35='?' (Size = 26), @names36='?' (Size = 33), @names37='?' (Size = 34), @names38='?' (Size = 36), @names39='?' (Size = 23), @names40='?' (Size = 36), @names41='?' (Size = 30), @names42='?' (Size = 36), @names43='?' (Size = 27), @names44='?' (Size = 33), @names45='?' (Size = 33), @names46='?' (Size = 33), @names47='?' (Size = 33), @names48='?' (Size = 33), @names49='?' (Size = 33), @names50='?' (Size = 33), @providerName='?' (Size = 1), @providerKey='?' (Size = 5)], CommandType='"Text"', CommandTimeout='30']
+SELECT "a"."Id", "a"."Name", "a"."ProviderKey", "a"."ProviderName", "a"."TenantId"
+FROM "AbpPermissionGrants" AS "a"
+WHERE "a"."TenantId" IS NULL AND "a"."Name" IN (@names1, @names2, @names3, @names4, @names5, @names6, @names7, @names8, @names9, @names10, @names11, @names12, @names13, @names14, @names15, @names16, @names17, @names18, @names19, @names20, @names21, @names22, @names23, @names24, @names25, @names26, @names27, @names28, @names29, @names30, @names31, @names32, @names33, @names34, @names35, @names36, @names37, @names38, @names39, @names40, @names41, @names42, @names43, @names44, @names45, @names46, @names47, @names48, @names49, @names50) AND "a"."ProviderName" = @providerName AND "a"."ProviderKey" = @providerKey
+2026-11-05 22:19:03.220 +01:00 [ERR] An exception occurred while iterating over the results of a query for context type 'Volo.Abp.PermissionManagement.EntityFrameworkCore.PermissionManagementDbContext'.
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: AbpPermissionGrants'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'no such table: AbpPermissionGrants'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SplitQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)

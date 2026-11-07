@@ -1,0 +1,38 @@
+@page "/My/Favorites"
+@model Rinoleggio.Web.Pages.My.Favorites.IndexModel
+
+<h1 class="mb-3">I miei preferiti</h1>
+<p class="text-muted">Contratti salvati per ritrovarli facilmente.</p>
+
+@if (Model.Favorites.TotalCount == 0)
+{
+    <div class="alert alert-info">Non hai ancora salvato contratti. <a href="/Listings">Cerca un contratto</a>.</div>
+}
+else
+{
+    <div class="row g-3">
+    @foreach (var item in Model.Favorites.Items)
+    {
+        <div class="col-md-6 col-xl-4"><article class="card h-100">
+            @if (!string.IsNullOrWhiteSpace(item.ImageUrl)) { <img src="@item.ImageUrl" class="card-img-top" style="height:190px;object-fit:cover" alt="@item.Title" /> }
+            <div class="card-body">
+                @if (!item.IsAvailable) { <span class="badge text-bg-secondary">Non più disponibile</span> }
+                <h2 class="h5 mt-2">@item.Title</h2>
+                @if (item.IsAvailable)
+                {
+                    <p class="text-muted">@item.Brand @item.Model @item.RegistrationYear · @item.Province</p>
+                    <p class="h5">@item.MonthlyFee.ToString("C0") <small class="fs-6 text-muted">/ mese</small></p>
+                    <a class="btn btn-outline-primary" href="/Listings/Details/@item.ListingId">Dettagli</a>
+                }
+                else { <p class="text-muted">Questo annuncio è stato ritirato, sospeso o è scaduto.</p> }
+                <form method="post" asp-page-handler="Remove" class="d-inline"><input type="hidden" name="listingId" value="@item.ListingId" /><input type="hidden" name="SkipCount" value="@Model.SkipCount" /><button class="btn btn-outline-danger" type="submit">Rimuovi</button></form>
+            </div>
+        </article></div>
+    }
+    </div>
+    <nav class="mt-4 d-flex justify-content-between" aria-label="Paginazione preferiti">
+        <a class="btn btn-outline-secondary @(Model.SkipCount == 0 ? "disabled" : "")" aria-disabled="@(Model.SkipCount == 0)" href="?skipCount=@Model.PreviousSkipCount">Precedente</a>
+        <span class="align-self-center">Pagina @Model.PageNumber di @Model.PageCount</span>
+        <a class="btn btn-outline-secondary @(!Model.HasNextPage ? "disabled" : "")" aria-disabled="@(!Model.HasNextPage)" href="?skipCount=@Model.NextSkipCount">Successiva</a>
+    </nav>
+}
